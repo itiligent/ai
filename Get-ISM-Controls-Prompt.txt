@@ -1,4 +1,4 @@
-# Dave's Extract Explicit ISM Controls from a Design Doc Prompt
+# Dave's Extract An Appendix of Explicit ISM Controls Prompt
 
 Doco = `the uploaded DOCX or PDF file`
 
