@@ -1,0 +1,426 @@
+# Dave's Extract Explicit ISM Controls from a Design Doc Prompt
+
+Doco = `Doc1.docx`
+
+Optional ASD ISM catalog inputs:
+
+* `ISM_catalog_json` = an uploaded ASD OSCAL ISM JSON file, if supplied.
+* `ISM_catalog_link` = `https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/main/ISM_catalog.json`
+
+Review the attached document **`Doco`** and create a table listing **every unique ISM control explicitly referenced anywhere in `Doco`**, excluding document comments and annotations.
+
+Use only the authoritative ASD OSCAL ISM catalog selected under the **ASD ISM catalog source-selection rules** below.
+
+Do **not** use any other ISM source, cached knowledge, prior knowledge, search results, inferred control wording, replacement controls, successor controls, superseded controls, recommendations, related controls or semantic matches.
+
+Do **not** extract, count, validate, map, report or include ISM controls that appear only in document comments, reviewer comments, comment balloons, resolved comments, annotation text or comment metadata.
+
+A control is **present in the selected ASD OSCAL ISM catalog** only if its normalised control ID is found by exact match in the fully parsed selected catalog.
+
+A control is **not present in the selected ASD OSCAL ISM catalog** only if:
+
+1. it was explicitly extracted from non-comment `Doco` content;
+2. its normalised control ID cannot be found by exact match in the fully parsed selected catalog; and
+3. it has failed the mandatory missing-match validation checks below.
+
+Do not use prior knowledge to decide whether a control is current, obsolete, replaced, superseded, valid or invalid.
+
+---
+
+## 1. ASD ISM catalog source-selection rules
+
+Before parsing any ISM catalog data, determine the authoritative ASD ISM catalog source as follows:
+
+1. If a valid uploaded ASD OSCAL ISM JSON file is supplied, use that uploaded JSON file as the authoritative `ISM_catalog`.
+
+2. If both an uploaded ASD OSCAL ISM JSON file and an OSCAL JSON link are supplied, prefer the uploaded JSON file and do **not** retrieve or use the link.
+
+3. If no valid uploaded ASD OSCAL ISM JSON file is supplied, but an OSCAL JSON link is supplied, retrieve and use the raw JSON from the supplied link.
+
+4. If multiple JSON files are uploaded, select the JSON file clearly identifiable by filename or content as the ASD OSCAL ISM catalog, such as:
+
+   * `ISM_catalog.json`;
+   * `ism-oscal`;
+   * `Information Security Manual`;
+   * a valid OSCAL JSON object containing `catalog`, `groups`, and ISM controls.
+
+5. If multiple uploaded JSON files could reasonably be the ASD OSCAL ISM catalog and the correct file cannot be determined, do not produce the final table. State only:
+
+   `The authoritative ASD OSCAL ISM catalog could not be determined.`
+
+6. If no uploaded JSON file and no OSCAL JSON link are supplied, do not produce the final table. State only:
+
+   `No ASD OSCAL ISM catalog source was supplied.`
+
+7. Do not combine, merge, compare or supplement catalog data from multiple sources.
+
+8. Do not use GitHub rendered pages, HTML pages, PDFs, YAML files, webpages, search snippets, cached files, previous outputs or prior knowledge as the ISM catalog.
+
+9. The selected catalog source must be parsed as a complete JSON object before any catalog matching is performed.
+
+Catalog source selection may occur before document extraction. However, the selected catalog must not be loaded, parsed, indexed, searched or matched until the deterministic extraction register from `Doco` is complete.
+
+Internally record which source was selected:
+
+* `Uploaded ASD OSCAL ISM JSON file`; or
+* `Supplied ASD OSCAL ISM JSON link`.
+
+Do not output this source-selection note unless requested.
+
+---
+
+## 2. Deterministic extraction from `Doco`
+
+Before loading, parsing, indexing, searching or matching against the ISM catalog, extract all visible or accessible ISM control references from non-comment `Doco` content.
+
+Use deterministic text extraction and pattern matching only.
+
+Do **not** use semantic matching, topic matching, control descriptions, ISM knowledge or inference to identify controls.
+
+Exclude all document comments and annotations from extraction. Do not read, search, extract, count, validate or report ISM controls that appear only in comments, reviewer comments, comment balloons, resolved comments, annotation text or comment metadata.
+
+Search non-comment document content for references matching the logical pattern:
+
+`ISM-####`
+
+where `####` is exactly four digits.
+
+Normalise extracted references to `ISM-####` by treating the following as equivalent:
+
+* `ISM-1234`;
+* `ISM–1234`;
+* `ISM—1234`;
+* `ISM - 1234`;
+* `ISM` followed by a line break, dash and four digits;
+* non-breaking spaces between components;
+* lower-case or mixed-case variants such as `ism-1234`.
+
+Include only explicit references that match this pattern after normalisation.
+
+Do **not** pad, repair, infer or convert malformed references into valid IDs.
+
+Examples of malformed references that must **not** be converted into valid controls:
+
+* `ISM-414`;
+* `ISM-l695`;
+* `1SM-1695`;
+* `ISM-16O5`;
+* `ISM-169`;
+* `ISM-16955`.
+
+Malformed references are not ISM controls for the final table.
+
+Unless explicitly requested, do not output malformed-reference reporting.
+
+Extract references from all accessible non-comment document sources, including:
+
+* headings;
+* body text;
+* tables and table cells;
+* captions;
+* footnotes and endnotes;
+* appendices;
+* headers and footers;
+* document-control pages;
+* table of contents entries;
+* figure lists and table lists.
+
+Do not extract references from:
+
+* document comments;
+* reviewer comments;
+* comment balloons;
+* resolved comments;
+* comment threads;
+* annotation text;
+* annotation metadata;
+* comment metadata.
+
+Treat this extraction pass as the authoritative document control inventory.
+
+If no valid `ISM-####` references are extracted from non-comment `Doco` content, do not search the catalog for candidate controls. Output only:
+
+`No valid ISM-#### control references were explicitly found in Doco.`
+
+---
+
+## 3. PDF-specific extraction requirements
+
+If `Doco` is a PDF, first determine whether it contains a reliable selectable text layer.
+
+If the PDF has a reliable selectable text layer, use that text layer as the primary extraction source.
+
+If the PDF is scanned, image-based, partially OCRed, or text extraction appears incomplete, perform OCR only to detect visible ISM control references in non-comment document content.
+
+OCR-derived matches may be included only where the visible OCR text clearly normalises to the exact pattern `ISM-####`.
+
+Do not guess or repair OCR errors. For example, do not convert `ISM-l695`, `1SM-1695`, `ISM-16O5`, or `ISM-414` into valid controls.
+
+Do not assign or output confidence ratings unless requested.
+
+If deterministic extraction cannot be completed because the PDF has no reliable text layer and OCR is unavailable or unreliable, do not produce the final table. State only:
+
+`Extraction could not be completed deterministically from the supplied PDF.`
+
+When assigning controls to numbered sections in PDFs, account for PDF reading-order issues. Use the nearest visible numbered section in the rendered document where available, not only raw extracted text order.
+
+Repeated headers, footers, watermarks, page numbers and page furniture must be assigned to `Unnumbered` unless they are clearly part of a numbered section.
+
+Do not extract ISM control references from PDF comments, annotations, markup notes, sticky notes, annotation popups or annotation metadata.
+
+If attachments or hidden PDF layers are not accessible, do not infer their contents.
+
+---
+
+## 4. DOCX-specific extraction requirements
+
+If `Doco` is a DOCX, extract accessible non-comment text from:
+
+* normal paragraphs;
+* headings;
+* tables;
+* headers and footers;
+* footnotes and endnotes, where accessible;
+* tracked-change text, where accessible;
+* text boxes or drawing text, where accessible;
+* table of contents entries;
+* appendices.
+
+Do not extract ISM control references from:
+
+* document comments;
+* reviewer comments;
+* comment balloons;
+* resolved comments;
+* comment threads;
+* comment metadata;
+* annotation text;
+* annotation metadata.
+
+If tracked changes, embedded objects, text boxes or other non-comment document parts are not accessible, do not infer their contents.
+
+Comments are excluded even if technically accessible.
+
+---
+
+## 5. Table of contents handling
+
+Search table of contents entries, figure lists and table lists for extraction completeness.
+
+Do not use TOC, figure-list or table-list occurrences to override a control’s body-section locations.
+
+If a control appears in the body and also appears in the TOC, include the body section location and include the TOC location only if it adds a distinct numbered section or `Unnumbered` occurrence.
+
+If a control appears only in the TOC and the TOC entry contains a visible section number, record that section number.
+
+If a control appears only in the TOC and the section number cannot be determined, record the location as `Unnumbered`.
+
+Do not use comments or annotations associated with TOC entries, figure lists or table lists.
+
+---
+
+## 6. Assign document locations
+
+For each extracted control occurrence, identify the numbered `Doco` section where the control appears.
+
+Use these rules:
+
+* Use numbered document sections only, not page numbers.
+* Record only the section number, not the section title.
+* If a control appears multiple times in the same numbered section, list that section once only.
+* If a control appears in a table, heading, paragraph, footnote, appendix, figure, header or footer, assign it to the nearest containing numbered section.
+* If the nearest containing numbered section cannot be determined, record the location as `Unnumbered`.
+* If a control appears in front matter, document-control pages, headers, footers, TOC entries, figure lists or table lists, record the location as `Unnumbered`.
+* If a TOC entry contains both a control reference and a section number, record that section number.
+* If a control appears in both numbered and unnumbered locations, include all applicable locations once each.
+* Sort section locations in document order, with `Unnumbered` last.
+
+Occurrences found only in comments, reviewer comments, comment balloons, resolved comments, annotation text or metadata must not be included in the extraction register or final table.
+
+Internally maintain an extraction register containing:
+
+* normalised ISM control ID;
+* each occurrence location;
+* assigned numbered section or `Unnumbered`;
+* occurrence source type, such as body, table, heading, header/footer, TOC/list/front matter, footnote/endnote, textbox/drawing text or appendix.
+
+Do not output the extraction register unless requested.
+
+---
+
+## 7. Parse the selected ASD OSCAL ISM catalog
+
+Only after completing the deterministic extraction register from `Doco`, load and parse the selected ASD OSCAL ISM catalog.
+
+Parse the complete JSON object.
+
+Do not rely on:
+
+* search snippets;
+* rendered webpages;
+* partial JSON;
+* cached data;
+* prior knowledge;
+* previously generated tables;
+* replacement or supersession knowledge.
+
+Build a complete internal catalog index by recursively traversing the full OSCAL JSON object.
+
+Treat a JSON object as an ISM control only if all of the following are true:
+
+* the object appears under a `controls` array;
+* the object has `class` equal to `ISM-control`;
+* the object has an `id` value that normalises exactly to `ISM-####`.
+
+Do not index ISM principles, examples, cross-references, links, prose, headings, related controls or any object whose class is not `ISM-control`.
+
+For each catalog control, record:
+
+* normalised ISM control ID;
+* ISM Guideline Section;
+* ISM Guideline Subsection;
+* ISM Topic;
+* exact ISM control description from the selected catalog.
+
+Use this hierarchy rule for catalog location fields:
+
+* `ISM Guideline Section` = nearest ancestor group title representing the main ISM guideline area, usually a title beginning with `Guidelines for`.
+* `ISM Guideline Subsection` = next relevant ancestor group title below the guideline section, where present.
+* `ISM Topic` = immediate parent group title containing the control.
+* If a level is not present in the selected catalog structure, leave that field blank.
+* Do not invent or infer hierarchy labels.
+
+Use the exact control statement/prose from the selected catalog as the ISM Control Description.
+
+Use the control object’s `parts` entry where `name` equals `statement` and use the exact `prose` value.
+
+If multiple statement parts exist for the same control, concatenate them in catalog order without paraphrasing.
+
+If no statement/prose exists for a matched control, leave the ISM Control Description blank rather than inferring wording.
+
+Normalise catalog IDs using the same normalisation rules as extracted document IDs.
+
+Match catalog controls by exact normalised ID only.
+
+Do not use fuzzy matching, semantic similarity, related controls, replacement controls, successor controls, superseded controls or inferred relationships.
+
+If no valid `ISM-control` objects are indexed, or if the catalog cannot be parsed as a complete JSON object, do not produce the final table. State only:
+
+`The selected ASD OSCAL ISM catalog could not be parsed into a complete ISM control index.`
+
+---
+
+## 8. Map extracted controls to catalog entries
+
+For each unique control extracted from non-comment `Doco` content, perform one exact normalised ID lookup against the complete catalog index.
+
+If found, populate:
+
+* ISM Guideline Section;
+* ISM Guideline Subsection;
+* ISM Topic;
+* Catalog Match Status = `Present in selected ASD ISM catalog`;
+* exact ISM Control Description from the selected catalog.
+
+If not found, temporarily mark the control as:
+
+`Candidate not present`
+
+Then perform the mandatory missing-match validation below before finalising its status.
+
+Do not replace missing controls with newer controls.
+
+Do not add related, replacement, successor, superseding or superseded controls.
+
+---
+
+## 9. Mandatory validation for candidate missing matches
+
+Before finalising any row as:
+
+`Not Present in selected ASD ISM catalog`
+
+perform these checks for each candidate missing control:
+
+1. Re-normalise the extracted control ID.
+2. Re-normalise every catalog control ID in the selected catalog index.
+3. Re-run an exact ID lookup against the full catalog index.
+4. Check whether the same four-digit numeric component exists in any catalog control ID that normalises to `ISM-####`.
+5. Confirm the selected catalog was parsed as a complete JSON object, not from a snippet or partial result.
+6. Confirm nested group structures were recursively traversed.
+7. Confirm all `controls` arrays were included in the index.
+8. Confirm the `class = ISM-control` filter did not accidentally exclude valid ISM controls.
+9. Confirm no non-selected catalog source was used.
+
+If the same four-digit numeric component exists in a catalog control ID that normalises to `ISM-####`, treat the control as present and populate the catalog fields from that matched control.
+
+Only if all checks confirm there is no exact normalised ID match may the row be finalised as:
+
+`Not Present in selected ASD ISM catalog`
+
+For finalised not-present rows, populate:
+
+* ISM Guideline Section = blank;
+* ISM Guideline Subsection = blank;
+* ISM Topic = blank;
+* Catalog Match Status = `Not Present in selected ASD ISM catalog`;
+* ISM Control Description = `Not found in selected ASD OSCAL ISM catalog`.
+
+Do not output validation notes unless requested.
+
+---
+
+## 10. Internal reconciliation before final output
+
+Before producing the final table, verify that:
+
+* final row count equals the number of unique normalised ISM controls extracted from non-comment `Doco` content;
+* every extracted valid control appears exactly once;
+* no row exists for a control that was not explicitly extracted from non-comment `Doco` content;
+* no row exists for a control that appeared only in document comments, reviewer comments, comment balloons, resolved comments, annotations or metadata;
+* every row has a Catalog Match Status;
+* every `Not present` row has failed the mandatory validation checks;
+* the numbered section column reconciles to the extraction register;
+* all catalog-derived fields came only from the selected ASD OSCAL ISM catalog;
+* no malformed reference was included as an ISM control;
+* the catalog index was built from a complete parsed JSON object;
+* all valid `ISM-control` objects under `controls` arrays were included in the catalog index.
+
+Do not output reconciliation notes unless requested.
+
+---
+
+## 11. Sorting
+
+Sort the final table by:
+
+1. Catalog Match Status, with `Present in selected ASD ISM catalog` first;
+2. ISM Guideline Section;
+3. ISM Guideline Subsection;
+4. ISM Topic;
+5. ISM Control number in ascending numerical order.
+
+Place controls marked `Not Present in selected ASD ISM catalog` after all present controls and sort them by ISM control number.
+
+---
+
+## 12. Final output
+
+Create the final table using these columns in this exact order:
+
+| ISM Guideline Section | ISM Guideline Subsection | ISM Topic | ISM Control | Catalog Match Status | ISM Control Description | Numbered Section(s) Where Control Appears |
+| --------------------- | ------------------------ | --------- | ----------- | -------------------- | ----------------------- | ----------------------------------------- |
+
+Rules:
+
+* Treat each unique ISM control as one row only.
+* Use normalised format `ISM-####` in the ISM Control column.
+* Use exact ISM catalog descriptions only.
+* Do not paraphrase ISM descriptions.
+* Do not include commentary, assumptions, compliance advice, recommendations, replacement controls, successor controls, superseded controls or reconciliation notes.
+* Do not include controls that were not explicitly extracted from non-comment `Doco` content.
+* Do not include controls that appear only in document comments, reviewer comments, comment balloons, resolved comments, annotations or metadata.
+* Do not include malformed references in the final ISM control table.
+* Do not mark a control as not present unless it has failed the mandatory validation checks.
+* Do not include the selected catalog source unless requested.
+
