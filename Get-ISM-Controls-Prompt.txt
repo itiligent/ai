@@ -1,6 +1,6 @@
 # Dave's Extract Explicit ISM Controls from a Design Doc Prompt
 
-Doco = `Doc1.docx`
+Doco = `the uploaded DOCX or PDF file`
 
 Optional ASD ISM catalog inputs:
 
