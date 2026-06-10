@@ -1,19 +1,18 @@
-# Dave's ISM Control Suggestion Mapping Prompt
+# Dave's ISM Control Suggestion & Quality Control Prompt
 
 Doco = `the uploaded DOCX or PDF file`
 
-ASD ISM catalog input for this run:
-* `ISM_catalog_json` = an uploaded ASD OSCAL ISM JSON file, if supplied.
+ASD ISM catalog inputs for this run:
+
+* `ISM_catalog_json` = an uploaded ASD OSCAL ISM JSON file, if supplied in the current run.
 * `ISM_catalog_yaml_link` = `https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/refs/heads/main/ISM_catalog.yaml`
 
-The default authoritative ISM catalog source is the exact raw YAML URL above.
+For this prompt, `current run` means only the files attached to the same user message as this prompt and the exact YAML URL stated in this prompt. Files, links, generated outputs, downloaded artefacts or extracted data from earlier messages in the same chat are not current-run inputs.
 
-An uploaded JSON file must not be used automatically.
+The default authoritative ISM catalog source is:
 
-Use an uploaded JSON file as default only if all of the following are true:
-
-a JSON file was uploaded;
-the uploaded JSON is identifiable as an ASD OSCAL ISM catalog by filename or top-level OSCAL catalog structure.
+1. a current-run uploaded JSON file, if it is identifiable as an ASD OSCAL ISM catalog under the source-selection rules below; otherwise
+2. the exact raw YAML URL above.
 
 Do not search for, discover, download, infer, reuse, or select any JSON catalog from the web.
 
@@ -21,21 +20,23 @@ Do not use any catalog information from a previous prompt, previous run, browser
 
 Output mode = `Full coverage`
 
-Preferred output format = `Excel workbook if tool-supported; otherwise CSV-style fenced text`
-
 If `Output mode = Mapped controls only`, omit `No clear ISM control identified` rows from the final action register, but still include the validation count of eligible solution sections with no clear control.
 
-If the user explicitly sets `Output mode = Full coverage`, include every eligible solution section, including sections with `No clear ISM control identified`.
+When `Output mode = Full coverage`, include every eligible solution section. For eligible sections that have no valid explicit ISM reference and no very-high-confidence suggested additional control, include a `No clear ISM control identified` row.
+
+Do not add a `No clear ISM control identified` row for an eligible section that already has an `Existing control already in Doco`, `Suggested alternate control`, or `Suggested additional control` row.
 
 Review the attached document **`Doco`** in the context of the Australian Government **Information Security Manual (ISM)**.
+
+Preferred output format = `Excel workbook if tool-supported; otherwise CSV-style fenced text`
 
 Create a reader-friendly action register that clearly separates:
 
 1. **Existing controls already referenced in eligible solution sections of `Doco`**;
-2. **Whether each existing control is appropriate for the section evidence**;
-3. **Suggested suitable alternate controls** where an existing reference is partially aligned, misaligned or insufficiently supported;
+2. **The quality finding for each existing referenced control**;
+3. **Suggested Alternate Controls** where an existing reference is partially aligned, misaligned or insufficiently supported;
 4. **New suitable ISM controls to add** based on separate strong evidence in the section;
-5. **Evidence / trigger phrases and evidence locations** that justify each existing-control review, alternate suggestion or new control suggestion; and
+5. **Trigger Phrases** that justify each existing-control review, alternate suggestion or Suggested New Control; and
 6. **Clear document actions to take**.
 
 This is a **strict very-high-confidence relevance mapping and quality-check task**, not a broad recommendation task.
@@ -44,12 +45,13 @@ The goals are to:
 
 * preserve all valid explicit ISM control references found in eligible solution sections;
 * count, but do not map, valid explicit ISM references found in excluded non-solution sections;
+* count, but do not map, valid explicit ISM references found only in unassigned non-section content;
 * clearly show which controls were already in the eligible solution sections of the document;
-* assess whether those existing references are appropriate for the section evidence;
+* assess whether those existing references are supported by the section evidence;
 * identify better fitting alternate controls only where the evidence strongly supports an alternate;
 * identify additional controls only where the evidence strongly supports a direct new match;
 * clearly distinguish suggested alternate controls from new suitable controls to add;
-* surface the evidence and evidence location that triggered every control review or suggestion;
+* surface the evidence that triggered every control review or suggestion;
 * clearly state the action to take for each row;
 * report malformed or typo-like ISM references separately, without mapping them as valid controls;
 * avoid weak, generic, keyword-only or assumption-based mappings; and
@@ -65,32 +67,44 @@ Do **not** infer implementation maturity, compliance status, control effectivene
 
 ---
 
-0. Clean-run and source-isolation rule
+## 0. Clean-run and source-isolation rule
 
 Treat this as a clean standalone run.
+
+At the start of the run, internally create a current-run input manifest listing only:
+
+* the current-run uploaded `Doco` file;
+* the supplied YAML URL;
+* any current-run uploaded JSON file, if present;
+* whether the uploaded JSON file is identifiable as an ASD OSCAL ISM catalog; and
+* the selected authoritative ISM catalog source.
+
+Do not include files, URLs, outputs, catalog data or evidence from previous prompts or previous runs in the current-run input manifest.
 
 Use only the current-run input manifest.
 
 Do not use:
 
-previous prompt activity;
-previous chat messages;
-previous downloaded files;
-previous generated files;
-previous run outputs;
-cached catalog files;
-remembered URLs;
-browser history;
-search results;
-prior knowledge;
-conversation memory;
-inferred source locations;
-GitHub rendered pages;
-repository browsing;
-API discovery;
-any JSON file unless it was uploaded in the current run and explicitly selected by the user.
+* previous prompt activity;
+* previous chat messages as mapping evidence;
+* previous downloaded files;
+* previous generated files;
+* previous run outputs;
+* cached catalog files;
+* remembered URLs;
+* browser history;
+* search results;
+* prior knowledge;
+* conversation memory;
+* inferred source locations;
+* GitHub rendered pages;
+* repository browsing;
+* API discovery;
+* any JSON file unless it was uploaded in the current run and selected under the source-selection rules.
 
-For catalog retrieval, the only permitted network action is direct retrieval of the exact raw YAML URL supplied in ISM_catalog_yaml_link.
+Having access to previous chat context does not itself violate this rule. A violation occurs only if previous chat content, previous files, previous outputs, cached catalog data or memory are used as a catalog source, `Doco` source, evidence source, mapping source or validation source.
+
+For catalog retrieval, the only permitted network action is direct retrieval of the exact raw YAML URL supplied in `ISM_catalog_yaml_link`, and only when the selected authoritative source is the supplied YAML link.
 
 Do not use a web search engine or general web search to locate the ISM catalog.
 
@@ -98,30 +112,27 @@ Do not search the web for JSON.
 
 Do not try alternative URLs.
 
-Do not fall back to JSON.
-
 Do not fall back to cached, remembered, previously downloaded, or previously generated catalog content.
 
-If the exact raw YAML URL cannot be directly retrieved and parsed in this run, stop with the required failure message:
+If a valid current-run uploaded ASD OSCAL ISM JSON catalog is selected, do not retrieve, parse, compare, supplement or merge with the YAML link.
 
-The supplied ASD OSCAL ISM YAML link could not be accessed or parsed. Upload the ASD OSCAL ISM JSON catalog and run the task again.
+If no valid current-run uploaded ASD OSCAL ISM JSON catalog is selected and the exact raw YAML URL cannot be directly retrieved in this run, stop with the required failure message:
 
-Before final output, confirm in the validation summary:
+`The supplied ASD OSCAL ISM YAML link could not be accessed. Upload the ASD OSCAL ISM JSON catalog and run the task again.`
 
-Validation Item	Result
-Current-run input manifest created	Yes
-Doco source	Current-run uploaded file only
-Selected ASD ISM catalog source	Supplied ASD OSCAL ISM YAML link / Explicitly selected uploaded ASD OSCAL ISM JSON file
-Catalog retrieval method	Direct retrieval of exact selected source only
-Web search used to discover catalog source	No
-JSON catalog searched for or downloaded from web	No
-Previous prompt activity, cached files or prior outputs used	No
-Conversation memory used	No
-Prior downloaded files used	No
+If no valid current-run uploaded ASD OSCAL ISM JSON catalog is selected and the exact raw YAML URL is retrieved but cannot be parsed as a complete YAML OSCAL catalog object, stop with the required failure message:
 
-If any of the required clean-run confirmations cannot truthfully be marked No or Yes as required, do not produce the final action register. State only:
+`The supplied ASD OSCAL ISM YAML catalog could not be parsed. Upload the ASD OSCAL ISM JSON catalog and run the task again.`
 
-Clean-run source isolation could not be verified. Run the task again in a new chat with only the required current-run files attached.
+If no current-run uploaded DOCX or PDF `Doco` file is supplied, do not retrieve the ISM catalog and do not produce the final output. State only:
+
+`No Doco file was supplied. Upload the DOCX or PDF file and run the task again.`
+
+Before final output, include the clean-run source-isolation confirmation rows in the single mandatory validation summary in section 21. Do not output a separate validation summary from this section.
+
+If any of the required clean-run confirmations cannot truthfully be marked with the required value, do not produce the final action register. State only:
+
+`Clean-run source isolation could not be verified. Run the task again in a new chat with only the required current-run files attached.`
 
 ---
 
@@ -129,58 +140,56 @@ Clean-run source isolation could not be verified. Run the task again in a new ch
 
 Before performing ISM control matching, determine the authoritative ASD ISM catalog source as follows.
 
-1. The default authoritative source is the supplied raw YAML link only:
+1. First, inspect files uploaded in the current run to determine whether a JSON file has been supplied.
+
+2. Use a current-run uploaded JSON file as the default authoritative ISM catalog source only if it is identifiable as an ASD OSCAL ISM catalog.
+
+3. A current-run uploaded JSON file is identifiable as an ASD OSCAL ISM catalog only if it has a valid top-level OSCAL `catalog` object and at least one of the following ISM-specific indicators:
+
+   * filename or metadata indicates `ISM_catalog`, `ism-oscal`, `Information Security Manual`, `Australian Cyber Security Centre`, `ACSC`, or `ASD`;
+   * catalog metadata title identifies the Information Security Manual;
+   * a limited structural identity scan finds one or more objects under `controls` arrays with `class = ISM-control` and IDs that normalise to `ISM-####`.
+
+4. This structural identity scan may inspect control IDs, class values and catalog metadata only. It must not use control statements, control prose, control descriptions or catalog content for relevance matching during source identification.
+
+5. During uploaded-JSON source identification, inspect only filename, top-level JSON structure, high-level catalog metadata, control IDs, class values and the presence of `ISM-control` objects. Do not assess control relevance, compare controls, perform ISM matching or use catalog control statements during source identification.
+
+6. If exactly one current-run uploaded JSON file is identifiable as an ASD OSCAL ISM catalog, select it as the authoritative catalog source.
+
+7. If multiple current-run uploaded JSON files are identifiable as ASD OSCAL ISM catalogs and the authoritative source cannot be determined unambiguously, do not use the YAML link as a fallback unless the user has explicitly allowed fallback to YAML. State only:
+
+   `The authoritative ASD OSCAL ISM catalog could not be determined.`
+
+8. If no current-run uploaded JSON file is identifiable as an ASD OSCAL ISM catalog, use the supplied raw YAML link only:
 
    `https://raw.githubusercontent.com/AustralianCyberSecurityCentre/ism-oscal/refs/heads/main/ISM_catalog.yaml`
 
-2. Retrieve the catalog only by directly opening or fetching the exact raw YAML URL above.
+9. Retrieve the YAML catalog only by directly opening or fetching the exact raw YAML URL above.
 
-3. Do not use web search, GitHub search, search snippets, rendered GitHub pages, repository browsing, API discovery, cached files, previous downloads, previous prompt outputs, remembered URLs or alternate URLs to locate or retrieve the catalog.
+10. Do not use web search, GitHub search, search snippets, rendered GitHub pages, repository browsing, API discovery, cached files, previous downloads, previous prompt outputs, remembered URLs or alternate URLs to locate or retrieve the catalog.
 
-4. Do not retrieve, search for, select or download any JSON catalog from the web.
+11. Do not retrieve, search for, select or download any JSON catalog from the web.
 
-5. Do not use any JSON catalog unless both of the following are true:
+12. Do not combine, merge, compare or supplement catalog data from multiple sources.
 
-   * the JSON file was uploaded in the current run; and
-   * the user explicitly instructed that the uploaded JSON should override the supplied YAML link.
+13. Do not use YAML files as the ISM catalog except for the exact supplied raw YAML link above.
 
-6. If an uploaded JSON file exists but the user did not explicitly instruct that it should override the YAML link, ignore the JSON file and use the supplied YAML link.
+14. Do not use JSON files as the ISM catalog except for a valid ASD OSCAL ISM JSON file uploaded in the current run and selected under these source-selection rules.
 
-7. If no explicit uploaded-JSON override instruction is present, use the supplied raw YAML link.
-
-8. Do not combine, merge, compare or supplement catalog data from multiple sources.
-
-9. Do not use YAML files as the ISM catalog except for the exact supplied raw YAML link above.
-
-10. Do not use JSON files as the ISM catalog except for a valid uploaded ASD OSCAL ISM JSON file explicitly selected by the user in the current run.
-
-11. If the exact supplied raw YAML link cannot be directly retrieved due to tool, access, network or environment limitations, do not search for another source and do not continue using prior knowledge. State only:
+15. If the exact supplied raw YAML link is selected but cannot be directly retrieved due to tool, access, network or environment limitations, do not search for another source and do not continue using prior knowledge. State only:
 
     `The supplied ASD OSCAL ISM YAML link could not be accessed. Upload the ASD OSCAL ISM JSON catalog and run the task again.`
 
-12. If the exact supplied raw YAML link is retrieved but cannot be parsed as a complete YAML OSCAL catalog object, do not search for another source and do not continue using prior knowledge. State only:
+16. If the exact supplied raw YAML link is selected and retrieved but cannot be parsed as a complete YAML OSCAL catalog object, do not search for another source and do not continue using prior knowledge. State only:
 
     `The supplied ASD OSCAL ISM YAML catalog could not be parsed. Upload the ASD OSCAL ISM JSON catalog and run the task again.`
 
-13. If the user explicitly selects an uploaded JSON override, perform only lightweight source-identification checks on files uploaded in the current run. A valid uploaded JSON catalog must be clearly identifiable by filename or structure, such as:
-
-    * `ISM_catalog.json`;
-    * `ism-oscal`;
-    * `Information Security Manual`;
-    * a valid OSCAL JSON object containing a top-level `catalog` object with nested `groups` fields.
-
-14. During uploaded-JSON source identification, inspect only filename, top-level JSON structure and high-level catalog metadata. Do not compare controls, perform ISM matching, assess control relevance or use catalog control statements.
-
-15. If the user explicitly selects an uploaded JSON override but the uploaded JSON catalog cannot be determined, do not use the YAML link as a fallback unless the user has also explicitly allowed fallback to YAML. State only:
-
-    `The authoritative ASD OSCAL ISM catalog could not be determined.`
-
-16. The selected catalog source may be loaded and indexed after source selection for efficiency, but the catalog index must not be used for section relevance assessment, suggested-control matching or existing-control quality review until the `Doco` section inventory and solution-section eligibility classification are complete.
+17. The selected catalog source must be loaded, parsed, completeness-validated and indexed immediately after source selection and before any `Doco` content is read, extracted, inventoried, classified or mapped. The catalog index may not be used for section relevance assessment, suggested-control matching or existing-control quality review until after the `Doco` section inventory and solution-section eligibility classification are complete, but the index itself must already exist before `Doco` is read.
 
 Internally record which source was selected:
 
-* `Supplied ASD OSCAL ISM YAML link`; or
-* `Explicitly selected uploaded ASD OSCAL ISM JSON file`.
+* `Current-run uploaded ASD OSCAL ISM JSON file`; or
+* `Supplied ASD OSCAL ISM YAML link`.
 
 Internally record the selected catalog version and published date from `catalog.metadata.version` and `catalog.metadata.published`, where available.
 
@@ -188,7 +197,126 @@ Do not output this source-selection note unless requested, except for the mandat
 
 ---
 
+## 1A. Mandatory catalog-first execution gate
+
+After creating the current-run input manifest and confirming that a current-run DOCX or PDF `Doco` file has been supplied, perform the catalog source-selection, retrieval, parsing, completeness validation and indexing steps before reading, extracting, inventorying, classifying or mapping any `Doco` content.
+
+The execution order is mandatory:
+
+1. Create the current-run input manifest.
+2. Confirm that a current-run DOCX or PDF `Doco` file is supplied.
+3. Select the authoritative ASD ISM catalog source under the source-selection rules.
+4. Retrieve or open only the selected catalog source.
+5. Parse the selected catalog as a complete OSCAL catalog object.
+6. Recursively traverse the complete parsed OSCAL catalog object.
+7. Build the complete internal ISM-control index.
+8. Validate that at least one valid `ISM-control` object has been indexed.
+9. Record catalog metadata fields, where available.
+10. Only after steps 1 to 9 are complete may `Doco` content be read, extracted, inventoried, classified or mapped.
+
+Do not read, extract, inspect, inventory, classify, analyse or map `Doco` content before the selected catalog has been successfully parsed into a complete internal ISM-control index.
+
+Before the catalog-first execution gate is complete, the only permitted interaction with `Doco` is to confirm that a current-run uploaded DOCX or PDF file exists. Do not inspect document text, metadata, pages, comments, headings, tables, sections, file content or embedded objects before the catalog-first execution gate is complete.
+
+If the selected catalog source cannot be retrieved, opened, parsed, recursively traversed, completeness-validated or indexed before reading `Doco`, stop with the applicable catalog failure message and do not inspect `Doco`.
+
+If no valid `ISM-control` objects are indexed, or if the selected catalog cannot be parsed as a complete OSCAL catalog object, do not inspect `Doco` and do not produce the final output. State only:
+
+`The selected ASD OSCAL ISM catalog could not be parsed into a complete ISM control index.`
+
+---
+
+## 1B. Parse, validate and index the selected ASD OSCAL ISM catalog
+
+This phase must be completed before reading, extracting, inventorying, classifying or mapping any `Doco` content.
+
+After source selection, parse and index the selected catalog source.
+
+Do not proceed to document access, document extraction, section inventory, eligibility classification, explicit-reference extraction, existing-control quality review or suggested-control matching until the selected catalog has been parsed as a complete OSCAL catalog object and a complete internal ISM-control index has been built.
+
+Parse the complete selected catalog source as follows:
+
+* If the selected source is a current-run uploaded JSON file, parse the complete uploaded JSON object.
+* If the selected source is the supplied raw YAML link, parse the complete YAML document into an equivalent internal OSCAL catalog object.
+
+Do not treat YAML as plain text for control matching. It must be parsed into structured object form before indexing.
+
+Do not treat JSON as plain text for control matching. It must be parsed into structured object form before indexing.
+
+Do not rely on:
+
+* search snippets;
+* rendered webpages;
+* partial JSON;
+* partial YAML;
+* cached data;
+* prior knowledge;
+* previously generated tables;
+* replacement or supersession knowledge.
+
+Build a complete internal catalog index by recursively traversing the full parsed OSCAL catalog object, whether it originated from a current-run uploaded JSON file or the supplied YAML link.
+
+Treat a parsed object as an ISM control only if all of the following are true:
+
+* the object appears under a `controls` array;
+* the object has `class` equal to `ISM-control`;
+* the object has an `id` value that normalises exactly to `ISM-####`.
+
+Do not index ISM principles, examples, cross-references, links, prose, headings, related controls or any object whose class is not `ISM-control`.
+
+For each catalog control, record:
+
+* normalised ISM control ID;
+* ISM Guideline Section;
+* ISM Guideline Subsection;
+* ISM Topic;
+* exact ISM control description from the selected catalog;
+* sort path, if available;
+* applicability markings, if available.
+
+Use this hierarchy rule for catalog location fields:
+
+* `ISM Guideline Section` = nearest ancestor group title representing the main ISM guideline area, usually a title beginning with `Guidelines for`.
+* `ISM Guideline Subsection` = next relevant ancestor group title below the guideline section, where present.
+* `ISM Topic` = immediate parent group title containing the control.
+* If a level is not present in the selected catalog structure, leave that field blank.
+* Do not invent or infer hierarchy labels.
+* When uncertain, use the nearest available catalog ancestor titles and leave ambiguous higher-level fields blank rather than guessing.
+
+Use the exact control statement/prose from the selected catalog as the ISM Control Description.
+
+Use the control object’s `parts` entry where `name` equals `statement` and use the exact `prose` value.
+
+If multiple statement parts exist for the same control, concatenate them in catalog order without paraphrasing.
+
+If no statement/prose exists for a matched control, leave the ISM Control Description blank rather than inferring wording.
+
+Record catalog metadata fields where available:
+
+* `catalog.metadata.version`;
+* `catalog.metadata.published`.
+
+If either metadata value is absent, leave it blank rather than inferring it.
+
+Normalise catalog IDs using the same normalisation rules as extracted document IDs.
+
+Match catalog controls by exact normalised ID only.
+
+Do not use fuzzy matching, semantic similarity, related controls, replacement controls, successor controls, superseded controls or inferred relationships.
+
+If no valid `ISM-control` objects are indexed, or if the selected catalog cannot be parsed as a complete OSCAL catalog object, do not inspect `Doco` and do not produce the final output. State only:
+
+`The selected ASD OSCAL ISM catalog could not be parsed into a complete ISM control index.`
+
+After the complete internal catalog index has been built and validated, proceed to document access, document extraction, section inventory and solution-section eligibility classification.
+
+Do not use the catalog index for section relevance assessment, suggested-control matching or existing-control quality review until after the `Doco` section inventory and solution-section eligibility classification are complete.
+
+---
+
 ## 2. Document access and completeness requirements
+
+Only begin this phase after the mandatory catalog-first execution gate and catalog indexing phase are complete.
 
 Before performing ISM mapping, confirm that `Doco` can be read sufficiently to identify numbered sections and section content.
 
@@ -301,7 +429,6 @@ For each numbered section, internally capture:
 * section title or topic;
 * concise security-relevant intent, if any;
 * key evidence phrases, configurations, technologies, risks, requirements or activities;
-* evidence location, where available;
 * explicit valid ISM control references written in that section;
 * malformed or typo-like ISM references written in that section;
 * whether the section is administrative, introductory, diagram-only, glossary-only, parent/container-only or materially solution-relevant.
@@ -366,7 +493,9 @@ Do not output `Excluded non-solution section` sections in the final mapping outp
 
 Do not mark excluded non-solution sections as `No clear ISM control identified`.
 
-Explicit valid `ISM-####` references found in excluded non-solution sections must not be mapped unless the same control also appears in an eligible solution section.
+Explicit valid `ISM-####` references found in excluded non-solution sections must never be mapped from the excluded section.
+
+If the same control also appears in an eligible solution section, map only the eligible section-control pair. Still count the excluded section-control pair separately as `Valid explicit ISM references found in excluded sections and not mapped`.
 
 Malformed or typo-like ISM references found in excluded non-solution sections may be included only in the separate malformed-reference report, not in the final action register.
 
@@ -419,6 +548,8 @@ For this section-based mapping task, include explicit ISM references only where 
 
 If a valid explicit ISM reference appears only in unnumbered front matter, document control pages, approval tables, distribution lists, table of contents entries, figure lists, table lists, headers, footers, excluded opening content or other excluded non-solution content, do not include it in the final mapping output unless the same reference also appears in an eligible numbered solution section.
 
+If the same reference appears in an excluded non-solution section and an eligible solution section, map only the eligible section-control pair and still count the excluded section-control pair as excluded and not mapped.
+
 Internally count such unassigned or excluded references.
 
 Do not extract references from comments, annotations, metadata or inline extracted comment artefacts.
@@ -455,18 +586,16 @@ If malformed or typo-like references are found, output a short section after the
 
 Use this compact table:
 
-| Doco Numbered Section / Subsection | Section Title / Topic | Malformed Reference as Written | Reason Not Mapped | Possible Intended Reference | Confidence | Action to Take |
-| ---------------------------------- | --------------------- | ------------------------------ | ----------------- | --------------------------- | ---------- | -------------- |
+| Doco Numbered Section / Subsection | Section Title / Topic | Malformed Reference as Written | Reason Not Mapped | Possible Intended Reference | Action to Take |
+| ---------------------------------- | --------------------- | ------------------------------ | ----------------- | --------------------------- | -------------- |
 
 `Possible Intended Reference` is advisory only. It must not be treated as a valid mapped ISM control.
 
-Populate `Possible Intended Reference` only where the correction is deterministic, such as an obvious OCR or character substitution. Leave it blank if uncertain. Do not use the existence of a similar control or a valid control elsewhere in the document as sufficient evidence unless the correction itself is deterministic.
+Populate `Possible Intended Reference` only where the malformed text can be corrected by a deterministic character substitution or formatting correction, such as `l` to `1`, `I` to `1`, `O` to `0`, or removal of extra spaces/dashes, and the corrected value forms exactly `ISM-####`.
 
-Use only these `Confidence` values:
+Leave `Possible Intended Reference` blank if uncertain.
 
-* `Deterministic`;
-* `Uncertain`;
-* blank.
+Do not use catalog existence, control similarity, topic similarity or another valid control elsewhere in the document to infer the intended reference.
 
 Use only this `Action to Take` value in the separate malformed-reference report:
 
@@ -478,86 +607,6 @@ If no malformed or typo-like references are found, omit this section.
 
 ---
 
-## 9. Parse and index the selected ASD OSCAL ISM catalog
-
-After source selection, the selected catalog may be parsed and indexed for efficiency.
-
-However, do not use the catalog index for section relevance assessment, suggested-control matching or existing-control quality review until after the `Doco` section inventory and solution-section eligibility classification are complete.
-
-Parse the complete selected catalog source as follows:
-
-* If the selected source is the supplied raw YAML link, parse the complete YAML document into an equivalent internal OSCAL catalog object.
-* If, and only if, the user explicitly selected a valid uploaded JSON override in the current run, parse the complete uploaded JSON object.
-
-Do not treat YAML as plain text for control matching. It must be parsed into structured object form before indexing.
-
-Do not rely on:
-
-* search snippets;
-* rendered webpages;
-* partial JSON;
-* partial YAML;
-* cached data;
-* prior knowledge;
-* previously generated tables;
-* replacement or supersession knowledge.
-
-Build a complete internal catalog index by recursively traversing the full parsed OSCAL catalog object, whether it originated from the supplied YAML link or an explicitly selected uploaded JSON override.
-
-Treat a parsed object as an ISM control only if all of the following are true:
-
-* the object appears under a `controls` array;
-* the object has `class` equal to `ISM-control`;
-* the object has an `id` value that normalises exactly to `ISM-####`.
-
-Do not index ISM principles, examples, cross-references, links, prose, headings, related controls or any object whose class is not `ISM-control`.
-
-For each catalog control, record:
-
-* normalised ISM control ID;
-* ISM Guideline Section;
-* ISM Guideline Subsection;
-* ISM Topic;
-* exact ISM control description from the selected catalog;
-* sort path, if available;
-* applicability markings, if available.
-
-Use this hierarchy rule for catalog location fields:
-
-* `ISM Guideline Section` = nearest ancestor group title representing the main ISM guideline area, usually a title beginning with `Guidelines for`.
-* `ISM Guideline Subsection` = next relevant ancestor group title below the guideline section, where present.
-* `ISM Topic` = immediate parent group title containing the control.
-* If a level is not present in the selected catalog structure, leave that field blank.
-* Do not invent or infer hierarchy labels.
-* When uncertain, use the nearest available catalog ancestor titles and leave ambiguous higher-level fields blank rather than guessing.
-
-Use the exact control statement/prose from the selected catalog as the ISM Control Description.
-
-Use the control object’s `parts` entry where `name` equals `statement` and use the exact `prose` value.
-
-If multiple statement parts exist for the same control, concatenate them in catalog order without paraphrasing.
-
-If no statement/prose exists for a matched control, leave the ISM Control Description blank rather than inferring wording.
-
-Record catalog metadata fields where available:
-
-* `catalog.metadata.version`;
-* `catalog.metadata.published`.
-
-If either metadata value is absent, leave it blank rather than inferring it.
-
-Normalise catalog IDs using the same normalisation rules as extracted document IDs.
-
-Match catalog controls by exact normalised ID only.
-
-Do not use fuzzy matching, semantic similarity, related controls, replacement controls, successor controls, superseded controls or inferred relationships.
-
-If no valid `ISM-control` objects are indexed, or if the selected catalog cannot be parsed as a complete OSCAL catalog object, do not produce the final output. State only:
-
-`The selected ASD OSCAL ISM catalog could not be parsed into a complete ISM control index.`
-
----
-
 ## 10. Existing referenced control quality and relevance check
 
 For every explicit valid `ISM-####` reference found in an eligible numbered `Doco` solution section, do not assume that the referenced control is a good match merely because it appears in the document.
@@ -566,7 +615,7 @@ Each explicitly referenced control must be assessed against the actual non-comme
 
 This is a quality and relevance check of controls already referenced in `Doco`.
 
-The purpose is to identify whether the document’s existing ISM control reference agrees with the implementation evidence in that section, and, where it does not, to suggest a better fitting control that is present as an `ISM-control` object in the selected ASD OSCAL ISM catalog.
+The purpose is to identify whether the document’s Existing Control reference agrees with the implementation evidence in that section, and, where it does not, to suggest a better fitting control that is present as an `ISM-control` object in the selected ASD OSCAL ISM catalog.
 
 Do not remove, hide or replace explicitly referenced controls. Always preserve explicitly referenced controls from eligible solution sections in the output for traceability.
 
@@ -581,8 +630,8 @@ For each explicitly referenced control, assign one of the following internal `Re
 Use these meanings:
 
 * `Agrees with section evidence` means the section evidence directly supports the substantive requirement of the exact ISM control statement, without relying on broad topic matching or assumptions.
-* `Partially agrees with section evidence` means the referenced control is related to the section content, but the section evidence more directly supports another control that is present as an `ISM-control` object in the selected ASD OSCAL ISM catalog, or only partly supports the substantive requirement of the referenced control.
-* `Does not agree with section evidence` means the referenced control does not have a direct, defensible, statement-level relationship to the section content.
+* `Partially agrees with section evidence` means the referenced control is related to the same sentence, bullet, table row, paragraph or immediately adjacent control-evidence block, but that same evidence only partly supports the substantive requirement of the referenced control or more directly supports another control that is present as an `ISM-control` object in the selected ASD OSCAL ISM catalog. Do not mark an existing control as partially agreeing merely because different evidence elsewhere in the same section supports an additional control.
+* `Does not agree with section evidence` means the referenced control does not have a direct, defensible, statement-level relationship to the same sentence, bullet, table row, paragraph or immediately adjacent control-evidence block in which the reference appears.
 * `Insufficient evidence to assess` means the section explicitly references the control but does not contain enough implementation-specific evidence to confirm whether the control is appropriate.
 * `Not present in selected ASD ISM catalog` means the explicit reference was found in `Doco`, but the normalised control ID is not present in the selected ASD OSCAL ISM catalog after mandatory validation.
 
@@ -596,13 +645,13 @@ For every `Existing control already in Doco` row, assign one of the following `E
 
 Map the values as follows:
 
-| Referenced Control Relevance Assessment | Is Existing Control Appropriate?        | Existing Control Finding        | Action to Take                     |
-| --------------------------------------- | --------------------------------------- | ------------------------------- | ---------------------------------- |
-| Agrees with section evidence            | Yes                                     | No issue identified             | Keep existing control              |
-| Partially agrees with section evidence  | Partially                               | Minor relevance concern         | Review existing control            |
-| Does not agree with section evidence    | No                                      | Potentially incorrect reference | Review existing control            |
-| Insufficient evidence to assess         | Insufficient evidence                   | Insufficient evidence           | Review existing control            |
-| Not present in selected ASD ISM catalog | Not present in selected ASD ISM catalog | Catalog validation issue        | Catalog validation review required |
+| Referenced Control Relevance Assessment | Existing Control Finding        | Action to Take                     |
+| --------------------------------------- | ------------------------------- | ---------------------------------- |
+| Agrees with section evidence            | No issue identified             | Keep existing control              |
+| Partially agrees with section evidence  | Minor relevance concern         | Review existing control            |
+| Does not agree with section evidence    | Potentially incorrect reference | Review existing control            |
+| Insufficient evidence to assess         | Insufficient evidence           | Review existing control            |
+| Not present in selected ASD ISM catalog | Catalog validation issue        | Catalog validation review required |
 
 When assessing agreement, compare the section evidence against the exact OSCAL control statement first.
 
@@ -632,7 +681,7 @@ Before finalising any explicitly referenced control as not present in the select
 2. Re-normalise every catalog control ID in the selected catalog index.
 3. Re-run an exact ID lookup against the full catalog index.
 4. Check whether the same four-digit numeric component exists in any catalog control ID that normalises to `ISM-####`.
-5. Confirm the selected catalog was parsed as a complete OSCAL catalog object from the selected YAML source or explicitly selected uploaded JSON source.
+5. Confirm the selected catalog was parsed as a complete OSCAL catalog object from the selected current-run uploaded JSON source or selected YAML source.
 6. Confirm nested group structures were recursively traversed.
 7. Confirm all `controls` arrays were included in the index.
 8. Confirm only the selected catalog source was used.
@@ -645,12 +694,11 @@ Only if all checks confirm there is no exact normalised ID match may the row be 
 For finalised not-present explicitly referenced rows, populate:
 
 * `Output Category` = `Existing control already in Doco`;
-* `Existing ISM Control Already in Doco` = normalised extracted control ID;
-* `Is Existing Control Appropriate?` = `Not present in selected ASD ISM catalog`;
+* `Existing Control` = normalised extracted control ID;
 * `Existing Control Finding` = `Catalog validation issue`;
 * `Action to Take` = `Catalog validation review required`;
 * `Existing Control Description` = `Not found in selected ASD OSCAL ISM catalog`;
-* `Suggested / New Control Description` = blank;
+* `Suggested Control Description` = blank;
 * `ISM Guideline Section` = blank;
 * `ISM Guideline Subsection` = blank;
 * `ISM Topic` = blank;
@@ -682,22 +730,22 @@ The allowed final action-register `Action to Take` values apply only to the cons
 
 Apply the action values as follows:
 
-| Output Category                  | Condition                                                              | Action to Take                                                  |
-| -------------------------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------- |
-| Existing control already in Doco | Existing referenced control agrees with section evidence               | Keep existing control                                           |
-| Existing control already in Doco | Existing referenced control partially agrees with section evidence     | Review existing control                                         |
-| Existing control already in Doco | Existing referenced control does not agree with section evidence       | Review existing control                                         |
-| Existing control already in Doco | Existing referenced control has insufficient evidence to assess        | Review existing control                                         |
-| Existing control already in Doco | Existing referenced control is not present in selected ASD ISM catalog | Catalog validation review required                              |
-| Suggested alternate control      | Better fitting control suggested for an existing referenced control    | Replace or supplement existing control with suggested alternate |
-| Suggested additional control     | New control suggested from separate strong section evidence            | Add new control                                                 |
-| No clear ISM control identified  | Eligible solution section has no existing or suggested control         | No action — no clear ISM control identified                     |
+| Output Category                  | Condition                                                                 | Action to Take                                                  |
+| -------------------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Existing control already in Doco | Existing referenced control has finding `No issue identified`             | Keep existing control                                           |
+| Existing control already in Doco | Existing referenced control has finding `Minor relevance concern`         | Review existing control                                         |
+| Existing control already in Doco | Existing referenced control has finding `Potentially incorrect reference` | Review existing control                                         |
+| Existing control already in Doco | Existing referenced control has finding `Insufficient evidence`           | Review existing control                                         |
+| Existing control already in Doco | Existing referenced control has finding `Catalog validation issue`        | Catalog validation review required                              |
+| Suggested alternate control      | Better fitting control suggested for an existing referenced control       | Replace or supplement existing control with suggested alternate |
+| Suggested additional control     | New control suggested from separate strong section evidence               | Add new control                                                 |
+| No clear ISM control identified  | Eligible solution section has no existing or suggested control            | No action — no clear ISM control identified                     |
 
 Do not use free-text action values in the final action register.
 
 Do not hide or remove existing controls from eligible solution sections of `Doco`, even where they are partially aligned, misaligned, unsupported or not present in the selected ASD OSCAL ISM catalog.
 
-Do not use `Replace or supplement existing control with suggested alternate` for an `Existing control already in Doco` row. Use `Review existing control` for the existing-control row, and use `Replace or supplement existing control with suggested alternate` only on the separate `Suggested alternate control` row where a very-high-confidence alternate is actually identified.
+Do not use `Replace or supplement existing control with suggested alternate` for an `Existing control already in Doco` row. Use `Review existing control` for the existing-control row, except where the finding is `No issue identified` or `Catalog validation issue`. Use `Replace or supplement existing control with suggested alternate` only on the separate `Suggested alternate control` row where a very-high-confidence alternate is actually identified.
 
 Do not treat a suggested alternate control as an automatic replacement. It is a quality-review recommendation. The final action wording must allow the document owner to decide whether to replace, supplement or retain the original reference.
 
@@ -744,21 +792,20 @@ Do not suggest an alternate merely because:
 If a better fitting alternate exists, add a separate row for the same eligible numbered `Doco` section with:
 
 * `Output Category` = `Suggested alternate control`;
-* `Existing ISM Control Already in Doco` = the normalised explicit `ISM-####` control that the alternate is reviewing;
-* `Is Existing Control Appropriate?` = the appropriateness value of the existing control being reviewed;
+* `Existing Control` = the normalised explicit `ISM-####` control that the alternate is reviewing;
 * `Existing Control Finding` = the finding for the existing control being reviewed;
-* `Suggested Suitable Alternate Control` = the suggested alternate ISM control;
-* `New Suitable ISM Control to Add` = blank;
+* `Suggested Alternate Control` = the suggested alternate ISM control;
+* `Suggested New Control` = blank;
 * `Action to Take` = `Replace or supplement existing control with suggested alternate`.
 
 The `Rationale` column must explain both:
 
 1. why the alternate control directly matches the section evidence; and
-2. why it is a better fit than the explicitly referenced control named in `Existing ISM Control Already in Doco`.
+2. why it is a better fit than the explicitly referenced control named in `Existing Control`.
 
 Use this wording:
 
-`Suggested as an alternate because the section explicitly states <evidence>, which directly matches the suggested ISM control statement requiring <control intent>. The existing referenced control <ISM-####> was assessed as <assessment> because <reason>.`
+`Suggested as an alternate because the section explicitly states <evidence>, which directly matches the suggested ISM control statement requiring <control intent>. The existing referenced control <ISM-####> received finding <Existing Control Finding> because <reason>.`
 
 Do not add more than one suggested alternate control for the same explicitly referenced control.
 
@@ -807,11 +854,10 @@ Reduce candidates to only the strongest direct statement-level matches.
 For `Suggested additional control` rows:
 
 * `Output Category` = `Suggested additional control`;
-* `Existing ISM Control Already in Doco` = blank;
-* `Is Existing Control Appropriate?` = blank;
+* `Existing Control` = blank;
 * `Existing Control Finding` = blank;
-* `Suggested Suitable Alternate Control` = blank;
-* `New Suitable ISM Control to Add` = the new suggested ISM control;
+* `Suggested Alternate Control` = blank;
+* `Suggested New Control` = the new suggested ISM control;
 * `Action to Take` = `Add new control`.
 
 ---
@@ -940,13 +986,13 @@ Use `No clear ISM control identified` only where all of the following are true:
 
 * the section is an `Eligible solution section`;
 * the section has no valid explicit ISM reference;
-* no very-high-confidence suggested additional control applies.
+* no very-high-confidence suggested additional control applies;
+* no other action-register row has already been created for that section.
 
 For `No clear ISM control identified` rows:
 
 * `Output Category` = `No clear ISM control identified`;
-* `Doco Evidence / Trigger Phrase` = concise reason why no direct match was found;
-* `Evidence Location` = most precise available locator, where available;
+* `Trigger Phrase` = concise reason why no direct match was found;
 * `Action to Take` = `No action — no clear ISM control identified`;
 * leave all ISM control, description, guideline, subsection and topic columns blank;
 * `Rationale` = `No clear ISM control identified because the section does not contain implementation-specific evidence that directly matches an ISM control statement.`
@@ -955,7 +1001,7 @@ In `Mapped controls only` mode, omit these rows from the final action register, 
 
 ---
 
-## 18. Evidence, evidence-location and rationale rules
+## 18. Evidence and rationale rules
 
 Use evidence from the eligible numbered section only.
 
@@ -965,15 +1011,9 @@ Keep each final table cell concise.
 
 Use short phrases, not paragraphs, except for `Rationale`.
 
-For `Doco Evidence / Trigger Phrase`, use one concise quoted phrase, configuration value, table cell, setting, or implementation detail.
+For `Trigger Phrase`, use one concise quoted phrase, configuration value, table cell, setting, or implementation detail.
 
-For `Evidence Location`, use the most precise available locator, such as page number, table number, figure number, paragraph, bullet, row, cell, appendix, or section-local context.
-
-If the precise evidence location is unavailable, leave `Evidence Location` blank.
-
-Do not use page numbers instead of numbered sections for mapping.
-
-If the evidence is table-based, cite the shortest relevant cell value or setting and identify the table, row, or cell where available.
+If the evidence is table-based, cite the shortest relevant cell value or setting.
 
 Do not include long extracts.
 
@@ -996,7 +1036,7 @@ Every rationale must explain the direct relationship between:
 
 Populate description columns as follows:
 
-| Output Category                  | Existing Control Description                                                                                                                    | Suggested / New Control Description                                             |
+| Output Category                  | Existing Control Description                                                                                                                    | Suggested Control Description                                                   |
 | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | Existing control already in Doco | Populate with the exact catalog statement for the existing referenced control, or `Not found in selected ASD OSCAL ISM catalog` if not present. | blank                                                                           |
 | Suggested alternate control      | Populate with the exact catalog statement for the existing referenced control where available.                                                  | Populate with the exact catalog statement for the suggested alternate control.  |
@@ -1039,38 +1079,48 @@ Use these count definitions:
 * `Numbered Doco sections identified` = count of numbered sections or subsections identified in accessible non-comment document content.
 * `Eligible solution sections` = count of numbered sections or subsections classified as eligible solution sections.
 * `Excluded non-solution sections` = count of numbered sections or subsections classified as excluded non-solution sections.
-* `Eligible solution sections with no clear control` = count of eligible solution sections that have no valid explicit ISM reference and no very-high-confidence suggested additional control.
+* `Eligible solution sections with no clear control` = count of eligible solution sections that have no valid explicit ISM reference, no very-high-confidence suggested additional control and no other action-register row.
 * `Valid explicit ISM references found in eligible sections` = count of unique eligible section-control pairs, not raw repeated occurrences.
 * `Valid explicit ISM references found in excluded sections and not mapped` = count of unique excluded section-control pairs that were not mapped because the section was excluded, regardless of whether the same control also appears elsewhere in an eligible section.
+* `Valid explicit ISM references found in unassigned non-section content and not mapped` = count of valid explicit ISM references found only in unnumbered front matter, headers, footers, document furniture or other non-section content that could not be assigned to an eligible numbered section.
 * `Explicit referenced controls not present in selected catalog` = count of unique eligible section-control pairs finalised as not present after mandatory validation.
 * `Malformed or typo-like ISM references found` = count of unique malformed reference occurrences by section and written value.
 
 If useful, append the unique-control count in parentheses after a section-control-pair count, for example: `<12 section-control pairs; 8 unique controls>`.
 
-| Validation Item                                                         | Result                                                                                  |
-| ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Mapping scope                                                           | Full document / Partial accessible content only                                         |
-| Selected ASD ISM catalog source                                         | Supplied ASD OSCAL ISM YAML link / Explicitly selected uploaded ASD OSCAL ISM JSON file |
-| Selected catalog version                                                | `<catalog.metadata.version, if available>`                                              |
-| Selected catalog published date                                         | `<catalog.metadata.published, if available>`                                            |
-| Catalog retrieval method                                                | Direct retrieval of exact selected source only                                          |
-| Web search used to discover catalog source                              | No                                                                                      |
-| JSON catalog searched for or downloaded from web                        | No                                                                                      |
-| Previous prompt activity, cached files or prior outputs used            | No                                                                                      |
-| Catalog parsed as complete OSCAL catalog object                         | Yes                                                                                     |
-| ISM-control objects indexed                                             | `<count>`                                                                               |
-| Numbered Doco sections identified                                       | `<count>`                                                                               |
-| Eligible solution sections                                              | `<count>`                                                                               |
-| Excluded non-solution sections                                          | `<count>`                                                                               |
-| Eligible solution sections with no clear control                        | `<count>`                                                                               |
-| Valid explicit ISM references found in eligible sections                | `<count>`                                                                               |
-| Valid explicit ISM references found in excluded sections and not mapped | `<count>`                                                                               |
-| Explicit referenced controls not present in selected catalog            | `<count>`                                                                               |
-| Malformed or typo-like ISM references found                             | `<count>`                                                                               |
-| Comments and annotations excluded                                       | Yes                                                                                     |
-| TOC, figure list and table list excluded as evidence                    | Yes                                                                                     |
-| Suggested controls limited to very high confidence                      | Yes                                                                                     |
-| Separate section inventory omitted from final output                    | Yes                                                                                     |
+| Validation Item                                                                      | Result                                                                                    |
+| ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| Mapping scope                                                                        | Full document / Partial accessible content only                                           |
+| Current-run input manifest created                                                   | Yes                                                                                       |
+| Doco source                                                                          | Current-run uploaded file only                                                            |
+| Selected ASD ISM catalog source                                                      | Current-run uploaded ASD OSCAL ISM JSON file / Supplied ASD OSCAL ISM YAML link           |
+| Selected catalog version                                                             | `<catalog.metadata.version, if available>`                                                |
+| Selected catalog published date                                                      | `<catalog.metadata.published, if available>`                                              |
+| Catalog retrieval method                                                             | Current-run uploaded JSON file only / Direct retrieval of exact selected YAML source only |
+| Catalog-first execution gate completed before Doco content read                      | Yes                                                                                       |
+| Doco content read only after complete catalog index created                          | Yes                                                                                       |
+| Catalog completeness validated before Doco section inventory                         | Yes                                                                                       |
+| Web search used to discover catalog source                                           | No                                                                                        |
+| JSON catalog searched for or downloaded from web                                     | No                                                                                        |
+| Previous prompt activity, cached files or prior outputs used                         | No                                                                                        |
+| Previous chat content used as mapping evidence                                       | No                                                                                        |
+| Conversation memory or prior outputs used as catalog or Doco source                  | No                                                                                        |
+| Prior downloaded files used                                                          | No                                                                                        |
+| Catalog parsed as complete OSCAL catalog object                                      | Yes                                                                                       |
+| ISM-control objects indexed                                                          | `<count>`                                                                                 |
+| Numbered Doco sections identified                                                    | `<count>`                                                                                 |
+| Eligible solution sections                                                           | `<count>`                                                                                 |
+| Excluded non-solution sections                                                       | `<count>`                                                                                 |
+| Eligible solution sections with no clear control                                     | `<count>`                                                                                 |
+| Valid explicit ISM references found in eligible sections                             | `<count>`                                                                                 |
+| Valid explicit ISM references found in excluded sections and not mapped              | `<count>`                                                                                 |
+| Valid explicit ISM references found in unassigned non-section content and not mapped | `<count>`                                                                                 |
+| Explicit referenced controls not present in selected catalog                         | `<count>`                                                                                 |
+| Malformed or typo-like ISM references found                                          | `<count>`                                                                                 |
+| Comments and annotations excluded                                                    | Yes                                                                                       |
+| TOC, figure list and table list excluded as evidence                                 | Yes                                                                                       |
+| Suggested controls limited to very high confidence                                   | Yes                                                                                       |
+| Separate section inventory omitted from final output                                 | Yes                                                                                       |
 
 Only include `Catalog parsed as complete OSCAL catalog object | Yes` after successful parsing. If parsing fails, stop with the required failure message instead of producing this validation summary.
 
@@ -1086,24 +1136,25 @@ Before the action register, include this compact reader guide.
 
 If producing an Excel workbook, place this reader guide in a separate worksheet named `Reader Guide`.
 
-| Column                               | Meaning                                                                                                  |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| Existing ISM Control Already in Doco | A valid `ISM-####` reference explicitly found in the eligible numbered section.                          |
-| Is Existing Control Appropriate?     | Whether the existing referenced control matches the section evidence.                                    |
-| Suggested Suitable Alternate Control | A better fitting control suggested for an existing reference that is partial, unsupported or misaligned. |
-| New Suitable ISM Control to Add      | A new control suggested from separate strong evidence in the section.                                    |
-| Doco Evidence / Trigger Phrase       | The exact section evidence that triggered the assessment or suggestion.                                  |
-| Evidence Location                    | The most precise available locator for the evidence, such as table, page, paragraph, row or cell.        |
-| Action to Take                       | The practical document action recommended by the mapping review.                                         |
+| Column                      | Meaning                                                                                                  |
+| --------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Existing Control            | A valid `ISM-####` reference explicitly found in the eligible numbered section.                          |
+| Existing Control Finding    | The quality-check result for the existing referenced control.                                            |
+| Suggested Alternate Control | A better fitting control suggested for an existing reference that is partial, unsupported or misaligned. |
+| Suggested New Control       | A new control suggested from separate strong evidence in the section.                                    |
+| Trigger Phrase              | The exact section evidence that triggered the assessment or suggestion.                                  |
+| Action to Take              | The practical document action recommended by the mapping review.                                         |
 
 ---
 
 ## 23. ISM control action register
 
-Create one consolidated action register using the following columns in this order.
+Create one consolidated action register using the following columns in this exact order.
 
-| Doco Numbered Section / Subsection | Section Title / Topic | Output Category | Doco Evidence / Trigger Phrase | Evidence Location | Existing ISM Control Already in Doco | Is Existing Control Appropriate? | Existing Control Finding | Suggested Suitable Alternate Control | New Suitable ISM Control to Add | Action to Take | Existing Control Description | Suggested / New Control Description | Mapped / Suggested ISM Guideline Section | Mapped / Suggested ISM Guideline Subsection | Mapped / Suggested ISM Topic | Rationale |
-| ---------------------------------- | --------------------- | --------------- | ------------------------------ | ----------------- | ------------------------------------ | -------------------------------- | ------------------------ | ------------------------------------ | ------------------------------- | -------------- | ---------------------------- | ----------------------------------- | ---------------------------------------- | ------------------------------------------- | ---------------------------- | --------- |
+| Doco Numbered Section / Subsection | Section Title / Topic | Output Category | Existing Control | Existing Control Finding | Suggested Alternate Control | Suggested New Control | Existing Control Description | Suggested Control Description | Mapped / Suggested ISM Guideline Section | Mapped / Suggested ISM Guideline Subsection | Mapped / Suggested ISM Topic | Trigger Phrase | Rationale | Action to Take |
+| ---------------------------------- | --------------------- | --------------- | ---------------- | ------------------------ | --------------------------- | --------------------- | ---------------------------- | ----------------------------- | ---------------------------------------- | ------------------------------------------- | ---------------------------- | -------------- | --------- | -------------- |
+
+If producing an Excel workbook, the `ISM Action Register` worksheet columns must exactly match the columns and column order specified in this section.
 
 If tool-supported, prefer producing an Excel workbook for the final action register because the register is too wide for readable Markdown. If Excel output is not available, use CSV-style fenced text with the same columns and column order.
 
@@ -1136,21 +1187,13 @@ Use only:
 * `Suggested additional control`;
 * `No clear ISM control identified`.
 
-#### Doco Evidence / Trigger Phrase
+#### Trigger Phrase
 
 Populate this for every row.
 
 Use one concise evidence phrase, configuration detail, table value or setting that triggered the row.
 
-#### Evidence Location
-
-Populate with the most precise available locator for the evidence, such as page number, table number, figure number, paragraph, bullet, row, cell, appendix, or section-local context.
-
-If the precise location is unavailable, leave blank.
-
-Do not use page numbers instead of numbered sections for mapping.
-
-#### Existing ISM Control Already in Doco
+#### Existing Control
 
 Populate this only where the row relates to a valid explicit ISM control already referenced in an eligible solution section of `Doco`.
 
@@ -1159,22 +1202,6 @@ For `Suggested alternate control` rows, populate this with the existing control 
 Leave blank for `Suggested additional control` rows.
 
 Leave blank for `No clear ISM control identified` rows.
-
-#### Is Existing Control Appropriate?
-
-Populate this for `Existing control already in Doco` rows.
-
-For `Suggested alternate control` rows, repeat the appropriateness value of the existing control being reviewed.
-
-Use only:
-
-* `Yes`;
-* `Partially`;
-* `No`;
-* `Insufficient evidence`;
-* `Not present in selected ASD ISM catalog`.
-
-Leave blank for `Suggested additional control` and `No clear ISM control identified` rows.
 
 #### Existing Control Finding
 
@@ -1192,7 +1219,7 @@ Use only:
 
 Leave blank for `Suggested additional control` and `No clear ISM control identified` rows.
 
-#### Suggested Suitable Alternate Control
+#### Suggested Alternate Control
 
 Populate this only for `Suggested alternate control` rows.
 
@@ -1200,7 +1227,7 @@ Use the normalised `ISM-####` value.
 
 Leave blank for all other row types.
 
-#### New Suitable ISM Control to Add
+#### Suggested New Control
 
 Populate this only for `Suggested additional control` rows.
 
@@ -1218,7 +1245,7 @@ Do not create custom action text.
 
 Use the description-column population rules in section 19.
 
-#### Suggested / New Control Description
+#### Suggested Control Description
 
 Use the description-column population rules in section 19.
 
@@ -1242,29 +1269,29 @@ When uncertain, use the nearest available catalog ancestor titles and leave ambi
 
 Use concise rationale.
 
-For existing controls that agree, use:
+For existing controls with finding `No issue identified`, use:
 
 `Keep existing control because the section explicitly states <evidence>, which directly matches the ISM control statement requiring <control intent>.`
 
-For existing controls that partially agree, use:
+For existing controls with finding `Minor relevance concern`, use:
 
 `Review existing control because the section explicitly states <evidence>, which only partially matches the ISM control statement.`
 
-For existing controls that do not agree, use:
+For existing controls with finding `Potentially incorrect reference`, use:
 
-`Review existing control because the section explicitly states <evidence>, which does not directly match the existing ISM control statement.`
+`Review existing control because the section explicitly states <evidence>, which does not directly match the Existing Control statement.`
 
-For insufficient evidence, use:
+For existing controls with finding `Insufficient evidence`, use:
 
 `Review existing control because it is explicitly referenced in Doco, but the section does not provide enough implementation-specific evidence to confirm direct applicability.`
 
-For not-present controls, use:
+For existing controls with finding `Catalog validation issue`, use:
 
 `Catalog validation review required because the control is explicitly referenced in Doco but is not present in the selected ASD OSCAL ISM catalog after mandatory validation.`
 
 For suggested alternates, use:
 
-`Suggested as an alternate because the section explicitly states <evidence>, which directly matches the suggested ISM control statement requiring <control intent>. The existing referenced control <ISM-####> was assessed as <assessment> because <reason>.`
+`Suggested as an alternate because the section explicitly states <evidence>, which directly matches the suggested ISM control statement requiring <control intent>. The existing referenced control <ISM-####> received finding <Existing Control Finding> because <reason>.`
 
 For suggested additional controls, use:
 
@@ -1280,15 +1307,16 @@ For no-clear rows, use:
 
 If producing an Excel workbook, format the final workbook as follows.
 
-Create these worksheets:
+Create these worksheets in this order:
 
-* `Validation Summary`;
-* `Reader Guide`;
-* `ISM Action Register`;
-* `Malformed References`, only if malformed references are found.
+1. `Validation Summary`;
+2. `Reader Guide`;
+3. `ISM Action Register`;
+4. `Malformed References`, only if malformed references are found.
 
 Format the `ISM Action Register` worksheet as a structured Excel table with:
 
+* Columns in the exact same order as specified in section 23, `ISM control action register`.
 * A dark blue header row with bold white text.
 * Alternating white and light-blue banded rows for readability.
 * Filter dropdowns enabled on every column.
@@ -1299,18 +1327,22 @@ Format the `ISM Action Register` worksheet as a structured Excel table with:
 * Auto-fit column widths, with long-text columns capped at a readable width.
 * The worksheet tab named `ISM Action Register`.
 
+The Excel output columns must not be reordered alphabetically, grouped by category, grouped by control type, optimised for width, or changed from the section 23 column order.
+
 Format the `Validation Summary`, `Reader Guide` and `Malformed References` worksheets with the same professional blue-and-white style where practical.
 
 Do not use random colours. Use a consistent professional blue-and-white table style.
 
+If the execution environment can create files, create the Excel workbook. Do not choose Markdown merely because it is easier to display in chat.
+
 If tool-supported, prefer producing an Excel workbook because the final action register is too wide for readable Markdown. If Excel workbook output is not available, use CSV-style fenced text with the same columns and column order.
 
-If an Excel workbook is produced, the chat response should provide only:
+If an Excel workbook is produced, the chat response must not follow the full Markdown final-output order. Instead, provide only:
 
-* a short completion note;
-* the workbook link or attachment;
-* the exclusion summary count; and
-* any required incomplete-output statement, if applicable.
+1. `Excluded non-solution sections: <count>.`
+2. the workbook link or attachment;
+3. any required incomplete-output statement, if applicable; and
+4. `Output complete`, unless the required incomplete-output statement is used.
 
 Do not duplicate the full workbook contents in chat when the Excel workbook is produced.
 
@@ -1318,7 +1350,7 @@ Do not duplicate the full workbook contents in chat when the Excel workbook is p
 
 ## 25. Final output order
 
-Present the final output in this order:
+If Excel workbook output is not produced, present the final output in this order:
 
 1. `Excluded non-solution sections: <count>.`
 2. `Validation summary`
@@ -1327,7 +1359,7 @@ Present the final output in this order:
 5. `Potential malformed ISM references found — not mapped`, if applicable
 6. `Output complete` or incomplete-output continuation statement
 
-If an Excel workbook is produced, put items 2 to 5 into workbook worksheets and provide only the workbook link or attachment in chat, plus a short completion note.
+If an Excel workbook is produced, put items 2 to 5 into workbook worksheets and provide only the short chat response specified in section 24.
 
 Do not output a separate inventory section.
 
@@ -1349,37 +1381,35 @@ When continuing an incomplete output, continue from the next incomplete row afte
 
 Before producing the final answer, verify only these critical checks:
 
-1. The selected ASD OSCAL ISM catalog source was determined correctly.
-2. The default selected source was the exact supplied raw YAML URL unless the user explicitly selected a valid uploaded JSON override in the current run.
-3. No web search was used to discover or retrieve any ISM catalog source.
-4. No JSON catalog was searched for, downloaded or selected from the web.
-5. The only permitted default catalog retrieval was a direct fetch of the exact supplied raw YAML URL.
-6. Previous prompt activity, previous downloads, cached files, conversation memory and prior outputs were not used.
-7. The catalog was parsed as a complete OSCAL catalog object from either the supplied raw YAML link or an explicitly selected uploaded JSON file, or the task stopped with the required failure message.
-8. The selected catalog version and published date were recorded from catalog metadata where available.
-9. Only `class = ISM-control` objects were indexed as ISM controls.
-10. Comments, annotations, TOC entries, figure lists and table lists were excluded as evidence.
-11. Excluded non-solution sections were not mapped and were not marked as `No clear ISM control identified`.
-12. Existing explicit controls in eligible solution sections were preserved.
-13. Existing explicit controls found in excluded non-solution sections were counted as excluded and not mapped unless separately found in an eligible solution section.
-14. Existing explicit controls were relevance-checked against section evidence and exact catalog statements.
-15. Not-present explicit controls were validated before being marked not present.
-16. Suggested alternate controls were used only to review the same implementation evidence or intended control objective as an existing reference.
-17. Suggested additional controls were used only for separate strong implementation evidence.
-18. The mini decision rule was followed: `Same sentence/table row/control-evidence block = alternate candidate; different implementation detail = additional candidate.`
-19. Suggested controls passed all very-high-confidence gates.
-20. If the ISM control statement could not be quoted or paraphrased into a direct requirement that clearly matched the section evidence, the control was not suggested.
-21. Candidate pools for suggested controls were narrowed using exact phrase, key noun, technology, activity, configuration and control-statement searches against the local in-memory catalog index only before final gate assessment.
-22. No weak, generic, keyword-only or assumption-based mappings were included.
-23. Description columns were populated according to section 19.
-24. Hierarchy columns were populated for the control being actioned in each row, using nearest available catalog ancestor titles and leaving ambiguous higher-level fields blank rather than guessing.
-25. Evidence location was populated where available and left blank where unavailable.
-26. Output mode was followed.
-27. If tool-supported, Excel workbook output was preferred for the final action register.
-28. If Excel output was produced, the workbook contains `Validation Summary`, `Reader Guide`, `ISM Action Register`, and `Malformed References` only if malformed references were found.
-29. If Excel output was produced, the chat response did not duplicate the full workbook contents.
-30. If Excel output was unavailable, CSV-style fenced text was used for the action register.
-31. No separate section inventory was output.
-32. If output could not fit, the response stopped at a complete row and used the required incomplete-output continuation statement.
+1. The clean-run and source-isolation rules in section 0 were followed.
+2. The ASD ISM catalog source-selection rules in section 1 were followed.
+3. The mandatory catalog-first execution gate in section 1A was followed.
+4. The selected ASD ISM catalog was retrieved or opened, parsed, recursively traversed, completeness-validated and indexed under section 1B before any `Doco` content was read, extracted, inventoried, classified or mapped.
+5. The document access and completeness requirements in section 2 were followed.
+6. DOCX-specific or PDF-specific extraction requirements were followed, as applicable.
+7. The section inventory was built from current-run non-comment `Doco` content only.
+8. Solution-section eligibility was applied before using the catalog for relevance assessment or suggested-control matching.
+9. Excluded non-solution sections were not mapped and were not marked as `No clear ISM control identified`.
+10. Explicit valid ISM references in excluded non-solution sections were counted as excluded and not mapped, even if the same control also appeared in an eligible section.
+11. Explicit valid ISM references in unassigned non-section content were counted as unassigned and not mapped.
+12. Existing explicit controls in eligible solution sections were preserved and relevance-checked against section evidence and exact catalog statements.
+13. Explicit referenced controls not present in the selected catalog were validated under section 11 before being marked not present.
+14. Suggested alternate controls were used only for the same implementation evidence or intended control objective as an existing reference.
+15. Suggested additional controls were used only for separate strong implementation evidence.
+16. The mini decision rule was followed: `Same sentence/table row/control-evidence block = alternate candidate; different implementation detail = additional candidate.`
+17. Suggested controls passed all very-high-confidence gates.
+18. No weak, generic, keyword-only or assumption-based mappings were included.
+19. Description columns were populated according to section 19.
+20. Hierarchy columns were populated for the control being actioned in each row, using nearest available catalog ancestor titles and leaving ambiguous higher-level fields blank rather than guessing.
+21. Trigger Phrase was populated for every final action-register row.
+22. Output mode was followed.
+23. If file creation is tool-supported, Excel workbook output was produced.
+24. If Excel output was produced, the `ISM Action Register` worksheet columns exactly match the columns and column order specified in section 23.
+25. If Excel output was produced, the workbook contains `Validation Summary`, `Reader Guide`, `ISM Action Register`, and `Malformed References` only if malformed references were found.
+26. If Excel output was produced, the worksheets appear in the required order.
+27. If Excel output was produced, the chat response did not duplicate the full workbook contents.
+28. If Excel output was unavailable, CSV-style fenced text was used for the action register with the same columns and column order specified in section 23.
+29. No separate section inventory was output.
+30. If output could not fit, the response stopped at a complete row and used the required incomplete-output continuation statement.
 
 Do not output this self-check unless requested.
