@@ -1,4 +1,4 @@
-# Dave's Extract An Appendix of Explicit ISM Controls Prompt
+# Dave's ISM Controls Appendix Builder Prompt
 
 Doco = `the uploaded DOCX or PDF file`
 
