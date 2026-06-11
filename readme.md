@@ -1,4 +1,4 @@
-[Download the ISM-Control-Discovery-Prompt](sandbox:/mnt/data/ISM-Control-Discovery-Action-Register-Prompt-ISM-Control-Discovery-Promp-repeatability-hardened.txt)
+[Download the ISM-Control-Discovery-Prompt.txt](sandbox:/mnt/data/ISM-Control-Discovery-Action-Register-Prompt-ISM-Control-Discovery-Promp-repeatability-hardened.txt)
 
 ## Before you start
 
@@ -18,7 +18,7 @@ Use clear filenames, for example:
 
 Purpose: create the stable section/evidence baseline. This run must **not** produce suggested controls, alternates or optional candidates.
 
-In the ISM-Control-Discovery-Promp prompt, change the setting near the top to:
+In the ISM-Control-Discovery-Prompt, change the setting near the top to:
 
 ```text
 Operating mode = `Section ledger only`
@@ -35,7 +35,7 @@ Optional review candidates = `On`
 Attach only:
 
 ```text
-1. The ISM-Control-Discovery-Prompt
+1. The ISM-Control-Discovery-Prompt.txt
 2. The Doco DOCX/PDF
 3. The same ASD OSCAL ISM catalog JSON/YAML, unless using the exact same pinned YAML source
 ```
@@ -43,7 +43,7 @@ Attach only:
 Use this message:
 
 ```text
-Run ISM-Control-Discovery-Action-Register-Prompt-ISM-Control-Discovery-Promp-repeatability-hardened.txt as a prompt.
+Run ISM-Control-Discovery-Prompt.txt as a prompt.
 
 Use the attached Doco as `Doco`.
 
@@ -86,7 +86,7 @@ Purpose: generate the first mapping from the exact frozen ledger.
 
 Start a **new chat**.
 
-In the ISM-Control-Discovery-Promp prompt, change:
+In the ISM-Control-Discovery-Prompt.txt, change:
 
 ```text
 Operating mode = `Mapping from supplied frozen ledger`
@@ -95,7 +95,7 @@ Operating mode = `Mapping from supplied frozen ledger`
 Attach only:
 
 ```text
-1. The ISM-Control-Discovery-Promp prompt
+1. The ISM-Control-Discovery-Prompt.txt
 2. The same ASD OSCAL ISM catalog JSON/YAML used in Run 1
 3. Run1_Frozen_Section_Ledger.xlsx
 ```
@@ -105,7 +105,7 @@ Do **not** attach the original Doco unless you only need filename confirmation. 
 Use this message:
 
 ```text
-Run ISM-Control-Discovery-Action-Register-Prompt-ISM-Control-Discovery-Promp-repeatability-hardened.txt as a prompt.
+Run ISM-Control-Discovery-Prompt as a prompt.
 
 This is Run 2 of the repeatability test.
 
@@ -153,7 +153,7 @@ Purpose: test whether suggested controls, alternate controls and optional candid
 
 Start another **new chat**.
 
-In the ISM-Control-Discovery-Promp prompt, keep:
+In the ISM-Control-Discovery-Prompt.txt, keep:
 
 ```text
 Operating mode = `Mapping from supplied frozen ledger`
@@ -162,7 +162,7 @@ Operating mode = `Mapping from supplied frozen ledger`
 Attach only:
 
 ```text
-1. The ISM-Control-Discovery-Promp prompt
+1. The ISM-Control-Discovery-Prompt.txt
 2. The same ASD OSCAL ISM catalog JSON/YAML used in Runs 1 and 2
 3. Run1_Frozen_Section_Ledger.xlsx
 4. Run2_Mapping_Baseline.xlsx
@@ -171,7 +171,7 @@ Attach only:
 Use this message:
 
 ```text
-Run ISM-Control-Discovery-Action-Register-Prompt-ISM-Control-Discovery-Promp-repeatability-hardened.txt as a prompt.
+Run ISM-Control-Discovery-Prompt.txt as a prompt.
 
 This is Run 3 of the repeatability test.
 
