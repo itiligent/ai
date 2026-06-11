@@ -1,7 +1,7 @@
 
 ## Before you start..
 
-#### [Download the ISM-Control-Discovery-Prompt.txt](sandbox:/mnt/data/ISM-Control-Discovery-Action-Register-Prompt-ISM-Control-Discovery-Promp-repeatability-hardened.txt)
+#### [Download the ISM-Control-Discovery-Prompt.txt](https://raw.githubusercontent.com/itiligent/ai/refs/heads/main/ISM-Control-Discovery-Prompt.txt)
 
 Use a **new chat for each run**. Attach only the files needed for that run.
 
