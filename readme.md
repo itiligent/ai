@@ -35,7 +35,7 @@ Optional review candidates = `On`
 Attach only:
 
 ```text
-1. The ISM-Control-Discovery-Promp1
+1. The ISM-Control-Discovery-Prompt
 2. The Doco DOCX/PDF
 3. The same ASD OSCAL ISM catalog JSON/YAML, unless using the exact same pinned YAML source
 ```
