@@ -121,4 +121,4 @@ Run2_ISM_Mapping_Output.xlsx
 
 ### Ad-Hoc Use
 
-` Operating mode = Full run` performs extraction, ledger creation and ISM mapping in one pass. Use this where stability and reviewability are less important.
+`Operating mode = Full run` performs extraction, ledger creation and ISM mapping in one pass. Use this where stability and reviewability are less important.
