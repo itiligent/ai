@@ -1,4 +1,4 @@
-# Dave's ISM Control Discovery Prompt 8.1)
+# Dave's ISM Control Discovery Prompt 8.1
 
 `Doco` = `the uploaded DOCX or PDF file`
 
