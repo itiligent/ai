@@ -39,7 +39,7 @@ Optional review candidate global cap = `20`
 
 Cross-run repeatability baseline = `Optional current-run supplied baseline workbook or frozen ledger`
 
-Operating mode = `Mapping from supplied frozen ledger`
+Operating mode = `Section ledger only`
 
 Allowed operating modes are:
 
