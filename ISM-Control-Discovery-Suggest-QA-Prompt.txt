@@ -32,7 +32,7 @@ Allowed output modes are:
 
 `Full coverage strict` means every eligible solution section is represented in the ISM Action Register. Existing explicit controls are preserved and quality-checked. Suggested controls and suggested alternate controls are included only where the evidence passes the action-register high-confidence gates in section 14. No Optional Review Candidates are produced, even if `Optional review candidates = On`. Where a section has no valid explicit ISM reference and no included suggested action-register control, include a `No action-register ISM control identified` row.
 
-`Full coverage` means every eligible solution section is represented in the ISM Action Register. The action register is balanced and evidence-led: suggested controls and suggested alternate controls should be included where section evidence substantively supports the selected catalog control statement or control intent and the relationship can be clearly explained without relying on broad assumptions. Optional Review Candidates may be produced outside the ISM Action Register when `Optional review candidates = On`; they are intended to surface plausible section-specific controls for human review when the evidence is implementation-specific but does not meet the final action-register threshold. Where a section has no valid explicit ISM reference and no included suggested action-register control, include a `No action-register ISM control identified` row.
+`Full coverage` means every eligible solution section is represented in the ISM Action Register. The action register is balanced and evidence-led: suggested alternate controls should be included where the same evidence cluster substantively supports a better fitting catalog control; suggested controls should be included only where the section evidence passes the stricter statement-level Suggested-control precision requirements in sections 13 and 14. Optional Review Candidates may be produced outside the ISM Action Register when `Optional review candidates = On`; they are intended to surface plausible section-specific controls for human review when the evidence is implementation-specific but does not meet the final action-register threshold. Where a section has no valid explicit ISM reference and no included suggested action-register control, include a `No action-register ISM control identified` row.
 
 `Mapped controls only` means rows are output only for valid explicit existing controls, suggested alternate controls and suggested controls. Omit `No action-register ISM control identified` rows from the final action register, but still include the validation count of eligible solution sections with no clear control.
 
@@ -46,16 +46,18 @@ Create a reader-friendly action register that clearly separates:
 
 1. **Existing controls already referenced in eligible solution sections of `Doco`**;
 2. **The quality finding for each existing referenced control**;
-3. **Suggested Alternate Controls** where the same evidence block more precisely supports a different or complementary ISM control;
+3. **Suggested Alternate Controls** where the same evidence block more precisely supports a different ISM control than the existing referenced control. Complementary controls that are not a better fit must be treated as `Suggested control`, not `Suggested alternate control`;
 4. **New suitable ISM controls to add** based on separate evidence-led, defensible implementation evidence in the section;
 5. **Trigger Phrases** that justify each existing-control review, alternate suggestion or Suggested New Control; and
 6. **Clear document actions to take**.
 
 This is a **balanced evidence-led ISM control suggestion and quality-check task**, not a broad recommendation task.
 
-The ISM Action Register must remain evidence-based and defensible, but it should actively identify suitable controls where the section contains implementation-specific security evidence. Do not require the document evidence to restate every element of the ISM control statement. A suggested control may be included where the evidence substantively supports the control intent and the relationship can be clearly explained.
+The ISM Action Register must remain evidence-based and defensible, but it should actively identify suitable controls where the section contains implementation-specific security evidence. Do not require the document evidence to restate every element of the ISM control statement. However, final `Suggested control` inclusion requires a statement-level evidence match under sections 13 and 14. Control-intent translation may be used to discover candidates, but it must not by itself justify promotion into the ISM Action Register.
 
 Avoid broad, generic, keyword-only or assumption-based mappings, but do not under-map where the section contains a specific technology, configuration, mechanism, data flow, access model, logging model, vulnerability activity, backup or resilience design, security tool integration, or operational security process that reasonably maps to an ISM control statement. Use Optional Review Candidates, when enabled, to surface plausible section-specific controls for human review where evidence is implementation-specific but not strong enough for the ISM Action Register.
+
+Use a three-tier evidence-strength model: direct and substantive matches may be included in the ISM Action Register; `Suggested control` rows require the stricter statement-level precision and control-statement element checks in sections 13 and 14; plausible section-specific near matches belong in Optional Review Candidates when enabled; weak, generic, keyword-only, product-name-only, assumption-based or good-practice-only matches must be omitted.
 
 The goals are to:
 
@@ -324,9 +326,11 @@ If either metadata value is absent, leave it blank rather than inferring it.
 
 Normalise catalog IDs using the same normalisation rules as extracted document IDs.
 
-Match catalog controls by exact normalised ID only.
+Match catalog controls by exact normalised ID only when validating explicit `ISM-####` references found in `Doco`.
 
-Do not use fuzzy matching, semantic similarity, related controls, replacement controls, successor controls, superseded controls or inferred relationships.
+Do not use fuzzy matching, semantic similarity, related controls, replacement controls, successor controls, superseded controls or inferred relationships for catalog source selection, catalog indexing, explicit ISM ID validation, or not-present validation.
+
+This restriction does not prevent evidence-led candidate generation for `Suggested control`, `Suggested alternate control`, or `Optional Review Candidate` assessment, provided every candidate is selected only from the parsed local catalog index and is justified against the exact selected catalog control statement.
 
 If no valid `ISM-control` objects are indexed, or if the selected catalog cannot be parsed as a complete OSCAL catalog object, do not inspect `Doco` and do not produce the final output. State only:
 
@@ -441,21 +445,63 @@ If deterministic section extraction cannot be completed because the PDF has no r
 
 ## 5. Phase 1 — Build the internal `Doco` section inventory
 
-Read `Doco` and build a section inventory from non-comment document content.
+Read `Doco` and build a canonical section inventory from non-comment document content.
 
-The section inventory is an internal working step only. Do not output a separate section inventory table or section inventory report unless explicitly requested.
+The section inventory is an internal working step only. Do not output a separate section inventory table or section inventory report in chat unless explicitly requested. If an Excel workbook is produced, include the `Section Eligibility Ledger` worksheet required by section 23 for auditability only; it is not part of the ISM Action Register.
 
-Identify every numbered section in `Doco`, including nested numbered sections.
+### Canonical numbered-section inventory rule
 
-For each numbered section, internally capture:
+Before classifying eligibility, create a canonical internal `Section Eligibility Ledger`.
+
+A `Numbered Doco section` means a body-section heading or subsection heading that forms part of the document structure, such as `1`, `1.1`, `1.1.1`, `A.1`, or a similar heading-style numbering pattern.
+
+Count each unique body numbered section heading once only.
+
+Identify every canonical numbered section in `Doco`, including nested numbered sections.
+
+Do not count any of the following as numbered `Doco` sections:
+
+* table of contents entries;
+* page numbers;
+* figure numbers;
+* table numbers;
+* numbered list items;
+* numbered bullets;
+* requirement IDs;
+* control IDs;
+* row numbers;
+* paragraph numbers that are not section headings;
+* repeated headers or footers;
+* document version numbers;
+* ISM control numbers.
+
+If the same section number appears in the table of contents and in the body, count only the body section.
+
+If the same section number appears in a repeated header, footer, bookmark, cross-reference or page furniture, count only the actual body section.
+
+For parent and child sections:
+
+* count both parent and child sections where both appear as numbered body headings;
+* assign only the text between a parent heading and its first child heading to the parent section;
+* do not roll child-section content up into the parent section for eligibility;
+* do not make a parent section eligible merely because one or more child sections contain eligible solution evidence;
+* classify a parent section as eligible only if the parent section itself contains substantive solution-design content before the first child heading.
+
+For each canonical numbered section, internally record exactly one `Section Eligibility Ledger` row with:
 
 * section number;
 * section title or topic;
+* body text present: `Yes` or `No`;
+* parent/container-only: `Yes` or `No`;
 * concise security-relevant intent, if any;
 * key evidence phrases, configurations, technologies, risks, requirements or activities;
 * explicit valid ISM control references written in that section;
 * malformed or typo-like ISM references written in that section;
-* whether the section is administrative, introductory, diagram-only, glossary-only, parent/container-only or materially solution-relevant.
+* whether the section is administrative, introductory, diagram-only, glossary-only, parent/container-only or materially solution-relevant;
+* eligibility classification;
+* eligibility reason.
+
+Do not perform ISM control matching until the canonical `Section Eligibility Ledger` is complete.
 
 Do not use the table of contents alone as the section inventory unless the document body is unavailable.
 
@@ -469,12 +515,30 @@ If no numbered sections are found, do not produce the final mapping output. Stat
 
 ---
 
-## 6. Phase 2 — Solution-section eligibility gate
+## 6. Phase 2 — Deterministic solution-section eligibility gate
 
-Classify each numbered `Doco` section as either:
+Classify every row in the canonical `Section Eligibility Ledger` as exactly one of:
 
 * `Eligible solution section`; or
 * `Excluded non-solution section`.
+
+Every numbered section identified in Phase 1 must receive exactly one classification.
+
+Do not leave any numbered section unclassified.
+
+Do not classify the same numbered section as both eligible and excluded.
+
+Eligibility must be determined only from the text assigned to that exact numbered section in the canonical `Section Eligibility Ledger`.
+
+Do not use child-section content to make a parent section eligible.
+
+Do not use parent-section content to make a child section eligible, except for minimal heading context needed to understand the child section.
+
+Do not use ISM catalog matching, suggested-control likelihood, availability of mapped controls, or the presence of a likely catalog control to decide whether a section is eligible.
+
+A section with explicit ISM references but no substantive solution-design or implementation evidence is not automatically eligible. It is eligible only if the section also contains implementation-specific solution evidence or is a control-mapping, compliance-mapping or traceability row that contains direct implementation evidence for the referenced control.
+
+A section may be eligible where it identifies a named technology, component, service, security tool, integration, data flow, access model, monitoring path, operational process or control responsibility and describes its role in the proposed or implemented solution. Do not require low-level configuration values where the section still provides enough implementation-specific evidence to identify what security function is being performed and where it applies.
 
 A numbered section is an `Eligible solution section` only if it contains substantive solution-design content describing a specific implemented or proposed:
 
@@ -509,11 +573,11 @@ A numbered section must be classified as `Excluded non-solution section` if it i
 * parent/container section with no substantive solution content of its own;
 * section that only states that another document, policy, SSP, CCM, HLD, LLD or external artefact will address the control;
 * section that references frameworks, standards or compliance objectives without describing a solution implementation;
-* section that only lists products, tools, headings or capability names without describing how the solution implements or configures them.
+* section that only lists products, tools, headings or capability names without describing their solution role, implementation function, integration, data flow, configuration, operational use or control responsibility.
 
 Do not perform suggested-control matching for `Excluded non-solution section` sections.
 
-Do not output `Excluded non-solution section` sections in the final mapping output.
+Do not output `Excluded non-solution section` sections in the final action register.
 
 Do not mark excluded non-solution sections as `No action-register ISM control identified`.
 
@@ -523,13 +587,13 @@ If the same control also appears in an eligible solution section, map only the e
 
 Malformed or typo-like ISM references found in excluded non-solution sections may be included only in the separate malformed-reference report, not in the final action register.
 
-Internally record excluded sections and exclusion reasons.
+Internally record excluded sections and exclusion reasons in the canonical `Section Eligibility Ledger`.
 
 Output only a short exclusion summary before the final output:
 
 `Excluded non-solution sections: <count>.`
 
-Do not include the excluded section list unless requested.
+Do not include the excluded section list in chat unless requested.
 
 ---
 
@@ -781,9 +845,11 @@ Do not treat a suggested alternate control as an automatic replacement. It is a 
 
 For every explicit ISM reference in an eligible solution section, perform an active better-fit and supplement check.
 
-A `Suggested alternate control` may be produced where the same sentence, bullet, table row, paragraph or immediately adjacent control-evidence block more directly or more precisely supports a different ISM control than the one explicitly referenced in `Doco`.
+A `Suggested alternate control` may be produced where the same evidence cluster or control objective more directly or more precisely supports a different ISM control than the one explicitly referenced in `Doco`.
 
-Do not limit alternate checks only to existing controls assessed as partially aligned or incorrect. If the existing control is defensible but a different control is clearly a more precise fit for the same evidence block, mark the existing control as `Minor relevance concern` and add one `Suggested alternate control`.
+Do not limit alternate checks only to existing controls assessed as partially aligned or incorrect. If the existing control is defensible but a different control is clearly a more precise fit for the same evidence cluster or intended control objective, mark the existing control as `Minor relevance concern` and add a `Suggested alternate control`.
+
+A suggested alternate may be produced even where the existing control is not clearly wrong, provided the same evidence cluster maps more directly, specifically or completely to the alternate control statement than to the existing referenced control. In that case, keep the existing control row with `Minor relevance concern` and add the alternate row.
 
 Where an explicitly referenced control is assessed as:
 
@@ -791,25 +857,27 @@ Where an explicitly referenced control is assessed as:
 * `Does not agree with section evidence`; or
 * `Insufficient evidence to assess`;
 
-actively check whether the same evidence block clearly explains what the original reference was trying to cover and whether a different catalog control is a better fit.
+actively check whether the same evidence cluster clearly explains what the original reference was trying to cover and whether a different catalog control is a better fit.
 
 Use this decision rule:
 
-`Same evidence block and better fit = Suggested alternate control.`
+`Same evidence cluster or same intended control objective and better fit = Suggested alternate control.`
 
 `Different implementation detail = Suggested control.`
 
-`Same evidence block and complementary control, not better fit = Suggested control.`
+`Same evidence cluster and complementary control, not better fit = Suggested control.`
 
-Treat evidence as the same evidence only where the existing ISM reference appears in the same sentence, bullet, table row, paragraph or immediately adjacent control-evidence block as the implementation detail being reviewed.
+Treat evidence as the same evidence cluster where the existing ISM reference and the implementation evidence are part of the same sentence, bullet, table row, paragraph, bullet group, table row group, implementation statement, immediately adjacent evidence block, or directly referenced eligible section.
 
-Where an explicit ISM reference appears in a dedicated control-mapping, compliance-mapping or traceability table, treat the same table row as the relevant control-evidence block. Use only the evidence in that row and any directly referenced eligible numbered section. Do not use other rows in the table as evidence for that control.
+Do not require the explicit ISM reference and supporting implementation evidence to appear in the exact same sentence where they are clearly connected in the same local evidence cluster.
 
-Treat evidence as separate evidence where it addresses a different implementation detail, component, process, setting, network path, account type, security activity or system behaviour.
+Where an explicit ISM reference appears in a dedicated control-mapping, compliance-mapping or traceability table, treat the same table row as the primary evidence block. Also use any directly referenced eligible numbered section, requirement row, design row or implementation note that the table row points to. Do not use unrelated rows in the table as evidence for that control.
+
+Treat evidence as separate evidence where it addresses a different implementation detail, component, process, setting, network path, account type, security activity, system behaviour, log source, backup item, vulnerability activity, security tool or operational responsibility.
 
 If the evidence is separate from the explicit reference, classify any action-register suggestion as a `Suggested control`, not a `Suggested alternate control`.
 
-Suggest an alternate control only if the section contains implementation-specific evidence that has a defensible control-statement-level relationship to a different control that is present as an `ISM-control` object in the selected ASD OSCAL ISM catalog and that more directly or more precisely represents the same implementation evidence or intended control objective as the existing explicit reference.
+Suggest an alternate control only if the section contains implementation-specific evidence that has a direct or substantive control-statement-level relationship to a different control that is present as an `ISM-control` object in the selected ASD OSCAL ISM catalog and that more directly or more precisely represents the same implementation evidence or intended control objective as the existing explicit reference.
 
 The alternate control must satisfy the action-register matching gates in section 14.
 
@@ -840,7 +908,7 @@ Use this wording:
 
 `Suggested as an alternate because the section explicitly states <evidence>, which substantively supports the suggested ISM control statement requiring <control intent>. The existing referenced control <ISM-####> received finding <Existing Control Finding> because <reason>.`
 
-Do not add more than one suggested alternate control for the same explicitly referenced control.
+Prefer one suggested alternate control for the same explicitly referenced control. A second may be included only where the same evidence cluster clearly supports two distinct control objectives and both are stronger or more precise than the existing reference.
 
 Do not add more than two suggested alternate controls for the same eligible numbered section.
 
@@ -854,50 +922,85 @@ For each `Eligible solution section`, actively consider whether the section cont
 
 Do not default to `No Suggested control` merely because the section does not quote or closely mirror the ISM control wording.
 
-Add a `Suggested control` to the ISM Action Register where:
+`Suggested control` rows use a stricter promotion threshold than Optional Review Candidates. Candidate discovery may use control intent, topic context and nearby catalog review, but final promotion to the ISM Action Register requires statement-level precision.
 
-* the section contains specific implementation evidence; and
-* the candidate control is present in the selected catalog; and
-* the evidence substantively supports the control statement or control intent; and
-* the rationale can clearly explain the relationship between the section evidence and the ISM control.
+Add a `Suggested control` to the ISM Action Register only where:
 
-The evidence does not need to satisfy every element of the control statement. However, it must be more than a broad product name, framework reference, capability label or generic cyber security topic.
+* the section contains specific implementation evidence;
+* the candidate control is present in the selected catalog;
+* the local evidence block directly or substantively supports the candidate control statement at statement level;
+* the match can be explained without relying on broad assumptions, product capability assumptions or topic-level association; and
+* the candidate passes the control-statement element check and action-register matching gates in section 14.
+
+The evidence does not need to satisfy every element of the control statement. However, it must clearly support the required action and at least one of the subject/component or security-outcome elements of the candidate control statement.
+
+A named product, technology, service or security capability may support a `Suggested control` only where the same section describes its solution role, integration, data flow, configuration, security function, operating process or control responsibility, and that local evidence block matches the candidate control statement at statement level.
 
 Use `Suggested control` where the suggested control is based on separate implementation evidence in the same eligible section and does not directly correct, replace or better represent an existing explicit reference.
 
 Use this decision rule before classifying any suggested control:
 
-`Same evidence block and better fit = Suggested alternate control.`
+`Same evidence cluster or same intended control objective and better fit = Suggested alternate control.`
 
 `Different implementation detail = Suggested control.`
 
-`Same evidence block and complementary control, not better fit = Suggested control.`
+`Same evidence cluster and complementary control, not better fit = Suggested control.`
 
 Do not classify a control as a suggested alternate merely because it appears in the same section as an existing reference.
 
 If a candidate control is based on different implementation evidence from the explicit control reference, classify it as `Suggested control` even if an existing reference in the same section is partially aligned, misaligned or insufficiently supported.
 
-Treat evidence as different implementation evidence where it addresses a different component, configuration item, control setting, network path, account type, log source, backup item, patching activity, vulnerability process, security tool, data flow or operational activity from the existing explicit reference.
+Treat evidence as different implementation evidence where it addresses a different component, configuration item, control setting, network path, account type, log source, backup item, patching activity, vulnerability process, security tool, data flow, operational activity or control responsibility from the existing explicit reference.
 
 Do not suggest a control merely because the section is about the same general topic as the ISM topic, subsection or guideline.
 
 The ISM control statement must be the primary basis for the match. ISM topic, subsection and guideline titles may be used only as supporting context, not as the reason for selection.
 
-Use the section’s specific evidence phrases, technologies, configurations, security activities, risks or requirements.
+Use the section’s specific evidence phrases, technologies, configurations, security activities, risks, data flows, responsibilities and requirements.
 
-For each eligible solution section, build a candidate pool of likely controls using exact phrases, key nouns, technologies, configurations, activities, data flows and control-statement terms from the local indexed catalog.
+For each eligible solution section, build a candidate pool of likely controls using only the local in-memory catalog index selected for the run. Do not use web search, external search results, prior knowledge or sources outside the selected catalog.
+
+Perform a three-pass local catalog candidate search:
+
+1. Evidence phrase pass — search the local catalog index using exact evidence phrases, technologies, configurations, mechanisms, tools, data flows, process terms and control responsibilities from the section.
+2. Control-intent pass — translate each evidence item into a concise control intent, such as authentication, privileged access, event logging, vulnerability scanning, patching, backup recovery, network filtering, cryptographic protection, administrative access control, security monitoring, incident handling, application control or hardening, then search only the local catalog index for matching control statements.
+3. Neighbouring candidate pass — review nearby controls in the same catalog topic or subsection only after at least one direct or substantive candidate has been found from the first two passes.
+
+Control-intent translation is a candidate-discovery method only. It must not be used by itself to justify final `Suggested control` inclusion.
+
+Do not include a control because it is nearby in the catalog. Use nearby controls only to avoid missing a more precise statement-level match.
+
+Before promoting a candidate to `Suggested control`, perform this control-statement element check:
+
+1. Identify the specific local evidence block from the eligible section. Use the sentence, bullet, table row, setting, configuration item, or immediately adjacent paragraph that triggered the candidate.
+2. Identify the key elements of the candidate ISM control statement:
+   * required action or obligation;
+   * subject, system, account, component, data, network path, process, role or technology; and
+   * security outcome, condition, scope or constraint.
+3. Promote the candidate to `Suggested control` only if the local evidence block clearly supports the required action and at least one of the subject/component or security-outcome elements.
+4. If the evidence supports only the general topic, catalog subsection, broad control intent, product capability, or a likely but unstated implementation practice, do not promote the candidate to `Suggested control`.
+5. Where the candidate is plausible and section-specific but fails the statement-element check, include it only as an Optional Review Candidate when Optional Review Candidates are enabled.
+6. Where the candidate is generic, keyword-only, assumption-based, good-practice-only or product-name-only, omit it entirely.
+
+Where multiple candidate controls appear relevant to the same evidence block, select only the strongest statement-level match.
+
+Prefer the control whose statement most directly describes the explicit evidence in the section.
+
+Do not include multiple `Suggested control` rows for the same evidence block unless the evidence clearly contains separate implementation obligations or separate security activities.
+
+If two candidate controls are close but neither is clearly supported at statement level, do not include either as a `Suggested control`. Consider the strongest one as an Optional Review Candidate only.
 
 Then classify candidates as:
 
-* `Suggested control` where the match is direct, substantive and defensible enough for the action register;
+* `Suggested control` where the match is direct, substantive and defensible enough for the action register and passes the control-statement element check;
 * `Optional Review Candidate` where the match is plausible and section-specific but not strong enough for the action register;
-* omitted where the match is generic, keyword-only, assumption-based or not section-specific.
+* omitted where the match is generic, keyword-only, assumption-based, product-name-only, framework-only, good-practice-only or not section-specific.
 
 Match against the indexed ISM control statement first. Use topic, subsection and guideline context only to disambiguate between otherwise plausible controls.
 
-For suggested controls, first build a small candidate pool using exact phrase, key noun, technology, activity, configuration and control-statement searches against the local in-memory indexed catalog only. Do not use web search, external search results or sources outside the selected catalog.
+Final inclusion must satisfy the action-register matching gates in section 14, including Gate 3A for `Suggested control` precision.
 
-Final inclusion must satisfy the action-register matching gates in section 14.
+Before finalising `No action-register ISM control identified` for an eligible section, perform a short candidate review using the strongest evidence phrases and control intents from that section. Consider at least the most relevant candidate controls found from the evidence phrase pass and control-intent pass. Promote only direct or substantive statement-level matches to the ISM Action Register; place plausible near matches in Optional Review Candidates where enabled.
 
 Do not match on broad keywords alone.
 
@@ -920,20 +1023,29 @@ If `Optional review candidates = Off`, do not output Optional Review Candidates 
 
 If `Output mode = Full coverage strict`, do not output Optional Review Candidates anywhere, even if `Optional review candidates = On`.
 
-Optional Review Candidates are non-authoritative human-review items that sit outside the ISM Action Register. They are intended to surface plausible, section-specific ISM controls for human review where the evidence is implementation-specific but does not meet the final action-register confidence threshold.
+Optional Review Candidates are non-authoritative human-review items that sit outside the ISM Action Register. They are intended to surface plausible, section-specific near matches for human review where the evidence is implementation-specific but does not meet the final action-register confidence threshold.
 
 They must never appear in the ISM Action Register.
 
 Include an Optional Review Candidate where:
 
 * the section is an Eligible solution section;
-* the section contains specific implementation evidence, configuration, mechanism, data flow, access model, logging model, hardening setting, backup or resilience design, vulnerability activity, or operational security process;
-* the candidate control is present in the selected catalog; and
-* the candidate has a defensible, control-statement-level relationship to the section evidence, even if the match is not strong enough for the ISM Action Register.
+* the section contains specific implementation evidence, configuration, mechanism, data flow, access model, logging model, hardening setting, backup or resilience design, vulnerability activity, security tool integration, operational security process or control responsibility;
+* the candidate control is present in the selected catalog;
+* the relationship is plausible and section-specific; and
+* the candidate failed action-register inclusion because one or more action-register gates were only partially met.
+
+Optional Review Candidates do not need to be near-complete mappings. They only need to be plausible, section-specific, implementation-evidence-based candidates where the missing evidence or uncertainty can be clearly stated.
+
+The candidate does not need to fully satisfy statement-level alignment, but the `Reason for Human Review` must clearly identify the missing evidence, weak directness, incomplete implementation detail, partial specificity or uncertainty that prevented action-register inclusion.
+
+Use Optional Review Candidates as the near-miss bucket. Do not suppress a plausible, section-specific control merely because it is not strong enough for the ISM Action Register.
 
 Do not include generic keyword-only, framework-only, product-name-only, good-practice-only, assumption-based, replacement, successor, related-control or unrelated controls.
 
 Where an eligible solution section contains implementation-specific security evidence but no final action-register suggested control, actively consider whether one or two Optional Review Candidates should be produced.
+
+Where an eligible section produces `No action-register ISM control identified`, actively check whether the section contains enough implementation-specific evidence to justify one Optional Review Candidate before finalising the no-action row.
 
 Do not include more than one Optional Review Candidate for the same eligible section unless the section contains two clearly separate implementation-specific evidence items. Do not include more than two Optional Review Candidates for any eligible section.
 
@@ -948,11 +1060,11 @@ Use these columns:
 | Doco Numbered Section / Subsection | Section Title / Topic | Candidate ISM Control | Candidate ISM Control Description | Trigger Phrase | Gate Not Met | Reason for Human Review |
 | ---------------------------------- | --------------------- | --------------------- | --------------------------------- | -------------- | ------------ | ----------------------- |
 
-Use `Gate Not Met` to identify why the candidate was not elevated into the ISM Action Register, such as `Evidence not specific enough for action-register inclusion`, `Evidence incomplete for action-register inclusion`, or `Directness below action-register threshold`.
+Use `Gate Not Met` to identify why the candidate was not elevated into the ISM Action Register, such as `Evidence not specific enough for action-register inclusion`, `Evidence incomplete for action-register inclusion`, `Directness below action-register threshold`, `Statement alignment only partial`, or `Control responsibility unclear`.
 
 Do not include optional candidates if they are merely broad, weak, generic, keyword-only, framework-only, product-name-only, assumption-based, good-practice, replacement, successor, related-control or speculative items.
 
-If `Optional review candidates = On` but no optional candidates are produced, omit the Optional Review Candidates worksheet or section.
+If `Optional review candidates = On` but no optional candidates are produced, omit the Optional Review Candidates worksheet or section, but report `Optional Review Candidates produced = 0` in the validation summary.
 
 ---
 
@@ -960,13 +1072,20 @@ If `Optional review candidates = On` but no optional candidates are produced, om
 
 Before including any `Suggested alternate control` or `Suggested control` in the ISM Action Register, apply the following gates.
 
+Use this evidence-strength model before applying the gates:
+
+* `Direct match` = the section evidence directly states the mechanism, configuration, process, data flow, access model, logging model, backup process, vulnerability activity, security operation or control responsibility required by the control. Include in the ISM Action Register if the gates are satisfied.
+* `Substantive match` = the section evidence does not restate every element of the control, but clearly implements, enforces, supports or is governed by the substantive requirement of the control statement. Include in the ISM Action Register where the rationale can explain the connection without assumptions. For `Suggested control` rows, control intent alone is not enough; the section must also pass the statement-level precision gate.
+* `Plausible near match` = the section evidence is implementation-specific and appears relevant to the control statement, but the document lacks enough directness, specificity or completeness for action-register inclusion. Include as an Optional Review Candidate if Optional review candidates = `On` and Output mode is not `Full coverage strict`.
+* `Weak or generic match` = the relationship depends on broad keywords, product names alone, good practice, assumed operating procedures or unstated implementation. Omit.
+
 A control may be included in the ISM Action Register where the gates are substantially satisfied.
 
-Do not require exact wording alignment. The section evidence must directly or substantively support the ISM control statement or control intent, and the rationale must be explainable without relying on broad assumptions.
+Do not require exact wording alignment. The section evidence must directly or substantively support the ISM control statement, and the rationale must be explainable without relying on broad assumptions. Control intent may assist candidate discovery, but it must not by itself justify final `Suggested control` inclusion.
 
-The evidence does not need to restate every word of the ISM control, but it must describe a specific implementation, configuration, mechanism, process, data flow, security setting, or operational activity that substantively satisfies, supports or is governed by the control statement.
+The evidence does not need to restate every word of the ISM control, but it must describe a specific implementation, configuration, mechanism, process, data flow, security setting, technology role, integration, control responsibility or operational activity that substantively satisfies, supports or is governed by the control statement. For `Suggested control` rows, the local evidence block must also match the required action and at least one subject/component or security-outcome element of the control statement.
 
-If the section contains specific implementation evidence but one gate is not fully met, consider whether the control should be included as an Optional Review Candidate under section 13A.
+If the section contains specific implementation evidence but one gate is only partially met, consider whether the control should be included as an Optional Review Candidate under section 13A.
 
 ### Gate 1 — Eligible section gate
 
@@ -976,9 +1095,9 @@ Do not suggest controls for excluded non-solution sections.
 
 ### Gate 2 — Implementation evidence gate
 
-The `Doco` section states an actual or proposed configuration, mechanism, process, setting, rule, data flow, system behaviour or operational activity.
+The `Doco` section states an actual or proposed configuration, mechanism, process, setting, rule, data flow, system behaviour, technology role, integration, control responsibility or operational activity.
 
-Generic mentions of technologies, frameworks, tools, standards, compliance objectives or capability names are insufficient for action-register inclusion unless the same section also describes the specific implementation detail that makes the control applicable.
+Generic mentions of technologies, frameworks, tools, standards, compliance objectives or capability names are insufficient for action-register inclusion unless the same section also describes the specific solution role, implementation detail, integration, data flow, control responsibility or security function that makes the control applicable.
 
 ### Gate 3 — Statement or control-intent alignment gate
 
@@ -988,9 +1107,32 @@ The match can be included where the section evidence substantively satisfies, su
 
 If the ISM control statement cannot be connected to the section evidence without relying on broad topic association or unstated assumptions, do not include the control in the ISM Action Register. Consider Optional Review Candidates if section 13A permits it.
 
+### Gate 3A — Suggested-control precision gate
+
+For `Suggested control` rows, the evidence must match the candidate ISM control statement more precisely than a broad control-intent match.
+
+The rationale must be able to show:
+
+* what the section explicitly says;
+* which specific requirement of the ISM control statement is supported;
+* which component, process, account type, system, data flow, security tool, configuration or operational activity the control applies to; and
+* why the match is stronger than a general topic-level association.
+
+Do not include a `Suggested control` where the rationale would need to rely on wording such as:
+
+* the section is about the same topic;
+* the technology normally provides this capability;
+* this would usually be expected;
+* the control may be relevant;
+* the implementation probably includes this;
+* this is a good-practice addition;
+* the control belongs to the same ISM topic or subsection.
+
+If this gate is only partially met, use Optional Review Candidates rather than the ISM Action Register.
+
 ### Gate 4 — Specificity gate
 
-The evidence identifies the relevant component, system, account type, network path, log source, protocol, cryptographic setting, backup item, patching process, vulnerability process, security tool or operational activity.
+The evidence identifies the relevant component, system, account type, network path, log source, protocol, cryptographic setting, backup item, patching process, vulnerability process, security tool, integration, technology role, control responsibility or operational activity.
 
 ### Gate 5 — No-assumption gate
 
@@ -1002,7 +1144,9 @@ Reasonable interpretation of explicit section evidence is allowed. Do not requir
 
 The control is one of the strongest available statement-level matches for that exact section, not one of several broadly related controls.
 
-Where two or three controls each match separate implementation details in the same section, each may be included subject to section 15.
+Where two or three controls each match separate implementation details in the same section, each may be included subject to section 15. Do not include multiple Suggested controls for the same evidence block unless the evidence clearly contains separate implementation obligations or separate security activities.
+
+Where multiple candidate controls appear relevant to the same evidence block, select only the strongest statement-level match. Where a candidate is plausible but not one of the strongest statement-level matches, or where two candidates are close but neither is clearly supported at statement level, consider the strongest candidate for Optional Review Candidates rather than the ISM Action Register.
 
 ### Gate 7 — Lowest-level section gate
 
@@ -1036,7 +1180,7 @@ When uncertain, prefer an Optional Review Candidate over a weak action-register 
 
 Suggested-control reasoning must use language such as:
 
-`Included because the section explicitly states <evidence>, which substantively supports the ISM control statement requiring <control intent>.`
+`Add new control because the section explicitly states <specific local evidence>, which directly supports the ISM control statement requirement for <specific action / mechanism / process / configuration / responsibility>. This is a Suggested control rather than an Optional Review Candidate because <statement-level match reason>.`
 
 For `Suggested alternate control` rows, reasoning must also explain why the alternate is a better fit than the existing referenced control.
 
@@ -1065,9 +1209,11 @@ For each `Eligible solution section`:
 * Do not use these limits as targets.
 * Do not add suggested controls to parent/container sections when the same evidence is mapped to a child section.
 * Do not add suggested controls to short sections containing only headings, architecture labels, generic descriptions, lists of components or transitional wording.
-* Do not add suggested controls for generic references to `ISM alignment`, `PROTECTED`, `Essential Eight`, `security tooling`, `monitoring`, `hardening`, `backup`, `patching`, `MFA`, `RBAC`, `logging`, `SIEM`, `SOAR`, `SOC`, `vulnerability management`, `application control`, `encryption` or `network security` unless the section states the specific implementation detail that directly or substantively supports the ISM control statement or control intent.
+* Do not add suggested controls for generic references to `ISM alignment`, `PROTECTED`, `Essential Eight`, `security tooling`, `monitoring`, `hardening`, `backup`, `patching`, `MFA`, `RBAC`, `logging`, `SIEM`, `SOAR`, `SOC`, `vulnerability management`, `application control`, `encryption` or `network security` unless the section states the specific implementation detail, solution role, integration, data flow, control responsibility or security function that directly or substantively supports the candidate ISM control statement at statement level.
 
 A section describing a security capability does not automatically justify mapping every ISM control related to that capability.
+
+A section may justify one or more controls where it describes how that capability is implemented, integrated, operated, governed by a responsibility model, or used to perform a specific security function in the solution.
 
 For example:
 
@@ -1132,8 +1278,9 @@ Do not use generic rationale such as:
 
 Every rationale must explain the direct relationship between:
 
-1. the section evidence; and
-2. the substantive requirement of the exact ISM control statement.
+1. the section evidence;
+2. the substantive requirement of the exact ISM control statement; and
+3. for `Suggested control` rows, why the local evidence block passes the statement-level precision threshold rather than being only an Optional Review Candidate.
 
 ---
 
@@ -1177,21 +1324,69 @@ Do not merge rows across different numbered sections.
 
 ---
 
+## 19A. Mandatory section-count reconciliation gate
+
+Before producing the validation summary, reader guide, final action register or workbook, reconcile the canonical `Section Eligibility Ledger`.
+
+The following equation must be true:
+
+`Numbered Doco sections identified = Eligible solution sections + Excluded non-solution sections`
+
+If this equation is not true, do not produce the final action register. Rebuild the canonical `Section Eligibility Ledger` and reclassify every numbered section exactly once.
+
+For `Full coverage strict` and `Full coverage` modes, the following equation must also be true:
+
+`Distinct eligible solution sections represented in the ISM Action Register = Eligible solution sections`
+
+A section is represented in the ISM Action Register if it has at least one row with one of these output categories:
+
+* `Existing control in doc`;
+* `Suggested alternate control`;
+* `Suggested control`;
+* `No action-register ISM control identified`.
+
+If this equation is not true for `Full coverage strict` or `Full coverage` mode, do not produce the final action register. Add the missing eligible sections using `No action-register ISM control identified` where no other action-register row applies.
+
+For `Mapped controls only` mode, the eligible-section action-register coverage equation is not required because eligible sections without mapped controls are deliberately omitted from the final action register. Still calculate and report the count of eligible solution sections with no clear control.
+
+Optional Review Candidate rows do not count as ISM Action Register representation.
+
+Do not allow control-mapping results, optional review candidates, output row limits, workbook formatting or final output convenience to change the canonical section inventory or eligibility classification after this reconciliation gate.
+
+Record the result of the reconciliation in the mandatory validation summary.
+
+---
+
 ## 20. Mandatory validation summary
 
 Before the reader guide and action register, output this compact validation summary.
 
 Use these count definitions:
 
-* `Numbered Doco sections identified` = count of numbered sections or subsections identified in accessible non-comment document content.
-* `Eligible solution sections` = count of numbered sections or subsections classified as eligible solution sections.
-* `Excluded non-solution sections` = count of numbered sections or subsections classified as excluded non-solution sections.
-* `Eligible solution sections with no clear control` = count of eligible solution sections that have no valid explicit ISM reference, no action-register Suggested control, no Suggested alternate control, and no other ISM Action Register row. Optional Review Candidate rows do not count as clear controls.
+* `Numbered Doco sections identified` = count of unique canonical body numbered section or subsection headings identified in accessible non-comment document content and recorded in the `Section Eligibility Ledger`. Exclude table of contents entries, page numbers, figure numbers, table numbers, numbered list items, numbered bullets, requirement IDs, control IDs, row numbers, non-heading paragraph numbers, repeated headers or footers, document version numbers and ISM control numbers.
+* `Eligible solution sections` = count of canonical `Section Eligibility Ledger` rows classified as `Eligible solution section`.
+* `Excluded non-solution sections` = count of canonical `Section Eligibility Ledger` rows classified as `Excluded non-solution section`.
+* `Section count reconciliation passed` = `Yes` only if `Numbered Doco sections identified = Eligible solution sections + Excluded non-solution sections`.
+* `Eligible-section action-register coverage passed` = `Yes` only if `Output mode = Full coverage strict` or `Output mode = Full coverage` and every eligible solution section is represented in the ISM Action Register by at least one action-register row. Use `Not applicable — Mapped controls only` when `Output mode = Mapped controls only`.
+* `Eligible solution sections with no clear control` = count of eligible solution sections that have no valid explicit ISM reference, no Suggested alternate control, and no Suggested control. Do not count `No action-register ISM control identified` rows as clear controls. Optional Review Candidate rows also do not count as clear controls.
+* `Total discrete ISM controls found in Doco` = count of unique valid explicit `ISM-####` control IDs found anywhere in accessible non-comment `Doco` content, after normalisation and de-duplication. This includes controls found in eligible solution sections, excluded non-solution sections and unassigned non-section content. Exclude malformed or typo-like references, suggested controls, suggested alternate controls and Optional Review Candidates.
+* `Total explicit ISM control references found in Doco` = raw occurrence count of valid explicit `ISM-####` references found anywhere in accessible non-comment `Doco` content. Count repeated occurrences separately, including repeated references to the same control in the same section or different sections. Include references from eligible solution sections, excluded non-solution sections and unassigned non-section content. Exclude malformed or typo-like references.
 * `Valid explicit ISM references found in eligible sections` = count of unique eligible section-control pairs, not raw repeated occurrences.
 * `Valid explicit ISM references found in excluded sections and not mapped` = count of unique excluded section-control pairs that were not mapped because the section was excluded, regardless of whether the same control also appears elsewhere in an eligible section.
 * `Valid explicit ISM references found in unassigned non-section content and not mapped` = count of valid explicit ISM references found only in unnumbered front matter, headers, footers, document furniture or other non-section content that could not be assigned to an eligible numbered section.
 * `Explicit referenced controls not present in selected catalog` = count of unique eligible section-control pairs finalised as not present after mandatory validation.
 * `Malformed or typo-like ISM references found` = count of unique malformed reference occurrences by section and written value.
+* `Existing controls found in eligible sections` = count of unique eligible section-control pairs where a valid explicit ISM reference was found and preserved as `Existing control in doc`.
+* `Existing controls quality-checked` = count of `Existing control in doc` rows assessed under section 9.
+* `Existing controls with No issue identified` = count of `Existing control in doc` rows with `Existing Control Finding = No issue identified`.
+* `Existing controls with Minor relevance concern` = count of `Existing control in doc` rows with `Existing Control Finding = Minor relevance concern`.
+* `Existing controls with Potentially incorrect reference` = count of `Existing control in doc` rows with `Existing Control Finding = Potentially incorrect reference`.
+* `Existing controls with Insufficient evidence` = count of `Existing control in doc` rows with `Existing Control Finding = Insufficient evidence`.
+* `Existing controls with Catalog validation issue` = count of `Existing control in doc` rows with `Existing Control Finding = Catalog validation issue`.
+* `Suggested alternate controls produced` = count of final ISM Action Register rows with `Output Category = Suggested alternate control`.
+* `Suggested new controls produced` = count of final ISM Action Register rows with `Output Category = Suggested control`.
+* `Optional Review Candidates produced` = count of rows deliberately placed outside the ISM Action Register in the `Optional Review Candidates` worksheet or section.
+* `Candidate controls considered but rejected` = count of local catalog candidates considered during candidate generation and omitted because they were generic, keyword-only, product-name-only, assumption-based, not section-specific, not one of the strongest statement-level matches, or otherwise failed the inclusion rules. This may be a best-effort count if the tool cannot retain every rejected candidate during processing.
 
 If useful, append the unique-control count in parentheses after a section-control-pair count, for example: `<12 section-control pairs; 8 unique controls>`.
 
@@ -1209,12 +1404,27 @@ If useful, append the unique-control count in parentheses after a section-contro
 | Numbered Doco sections identified                                                    | `<count>`                                                                                  |
 | Eligible solution sections                                                           | `<count>`                                                                                  |
 | Excluded non-solution sections                                                       | `<count>`                                                                                  |
+| Section count reconciliation passed                                                  | Yes                                                                                        |
+| Eligible-section action-register coverage passed                                     | Yes OR Not applicable — Mapped controls only                                               |
 | Eligible solution sections with no clear control                                     | `<count>`                                                                                  |
+| Total discrete ISM controls found in Doco                                            | `<count>`                                                                                  |
+| Total explicit ISM control references found in Doco                                  | `<count>`                                                                                  |
 | Valid explicit ISM references found in eligible sections                             | `<count>`                                                                                  |
 | Valid explicit ISM references found in excluded sections and not mapped              | `<count>`                                                                                  |
 | Valid explicit ISM references found in unassigned non-section content and not mapped | `<count>`                                                                                  |
 | Explicit referenced controls not present in selected catalog                         | `<count>`                                                                                  |
 | Malformed or typo-like ISM references found                                          | `<count>`                                                                                  |
+| Existing controls found in eligible sections                                         | `<count>`                                                                                  |
+| Existing controls quality-checked                                                    | `<count>`                                                                                  |
+| Existing controls with No issue identified                                           | `<count>`                                                                                  |
+| Existing controls with Minor relevance concern                                       | `<count>`                                                                                  |
+| Existing controls with Potentially incorrect reference                               | `<count>`                                                                                  |
+| Existing controls with Insufficient evidence                                         | `<count>`                                                                                  |
+| Existing controls with Catalog validation issue                                      | `<count>`                                                                                  |
+| Suggested alternate controls produced                                                | `<count>`                                                                                  |
+| Suggested new controls produced                                                      | `<count>`                                                                                  |
+| Optional Review Candidates produced                                                  | `<count>`                                                                                  |
+| Candidate controls considered but rejected                                           | `<count>`                                                                                  |
 
 In the validation summary, output only the selected value for `Selected ASD ISM catalog source`, not both options.
 
@@ -1223,6 +1433,10 @@ In the validation summary, output only the selected value for `Catalog retrieval
 Only include `Catalog parsed as complete OSCAL catalog object | Yes` after successful parsing. If parsing fails, stop with the required failure message instead of producing this validation summary.
 
 Do not include broader commentary, recommendations or assumptions in this validation summary.
+
+If section-count reconciliation cannot be truthfully marked as passed, do not produce the final action register. Rebuild the canonical `Section Eligibility Ledger` and re-run eligibility classification before final output.
+
+If eligible-section action-register coverage cannot be truthfully marked as passed for `Full coverage strict` or `Full coverage`, do not produce the final action register. Add missing eligible sections using `No action-register ISM control identified` where no other action-register row applies.
 
 If the output is partial because the document or response is truncated, state this in the required incomplete-output statement or workbook-only chat response.
 
@@ -1394,7 +1608,7 @@ For suggested alternates, use:
 
 For Suggested controls, use:
 
-`Add new control because the section explicitly states <evidence>, which substantively supports the ISM control statement requiring <control intent>.`
+`Add new control because the section explicitly states <specific local evidence>, which directly supports the ISM control statement requirement for <specific action / mechanism / process / configuration / responsibility>. This is a Suggested control rather than an Optional Review Candidate because <statement-level match reason>.`
 
 For `No action-register ISM control identified` rows, use:
 
@@ -1416,9 +1630,17 @@ Create these worksheets in this order:
 
 1. `Validation Summary`;
 2. `Reader Guide`;
-3. `ISM Action Register`;
-4. `Optional Review Candidates`, only if `Optional review candidates = On` and optional candidates are deliberately produced outside the action register;
-5. `Malformed References`, only if malformed references are found.
+3. `Section Eligibility Ledger`;
+4. `ISM Action Register`;
+5. `Optional Review Candidates`, only if `Optional review candidates = On` and optional candidates are deliberately produced outside the action register;
+6. `Malformed References`, only if malformed references are found.
+
+The `Section Eligibility Ledger` worksheet is for auditability and count reconciliation only. It is not part of the ISM Action Register and must not be used to add control mappings outside the action-register rules.
+
+Use these columns for the `Section Eligibility Ledger` worksheet, in this exact order:
+
+| Doco Numbered Section / Subsection | Section Title / Topic | Body Text Present | Parent / Container Only | Eligibility Classification | Eligibility Reason | Explicit ISM References Found | Evidence Summary |
+| ---------------------------------- | --------------------- | ----------------- | ----------------------- | -------------------------- | ------------------ | ----------------------------- | ---------------- |
 
 Format the `ISM Action Register` worksheet as a structured Excel table with:
 
@@ -1435,7 +1657,7 @@ Format the `ISM Action Register` worksheet as a structured Excel table with:
 
 The Excel output columns must not be reordered alphabetically, grouped by category, grouped by control type, optimised for width, or changed from the section 22 column order.
 
-Format the `Validation Summary`, `Reader Guide`, `Optional Review Candidates` and `Malformed References` worksheets with the same professional blue-and-white style where practical.
+Format the `Validation Summary`, `Reader Guide`, `Section Eligibility Ledger`, `Optional Review Candidates` and `Malformed References` worksheets with the same professional blue-and-white style where practical.
 
 Do not use random colours. Use a consistent professional blue-and-white table style.
 
@@ -1467,9 +1689,9 @@ If Excel workbook output is not produced, present the final output in this order
 6. `Potential malformed ISM references found — not mapped`, if applicable
 7. `Output complete` or incomplete-output continuation statement
 
-If an Excel workbook is produced, put items 2 to 5 into workbook worksheets and provide only the short chat response specified in section 23.
+If an Excel workbook is produced, put the validation summary, reader guide, section eligibility ledger, ISM action register, optional review candidates if produced, and malformed-reference report if applicable into workbook worksheets and provide only the short chat response specified in section 23.
 
-Do not output a separate inventory section.
+Do not output a separate section inventory in chat.
 
 Do not output separate inventory-style tables for existing, alternate and additional controls unless explicitly requested.
 
@@ -1495,37 +1717,47 @@ Before producing the final answer, verify only these critical checks:
 4. The selected ASD ISM catalog was retrieved or opened, parsed, recursively traversed, completeness-validated and indexed under section 1B before any `Doco` content was read, extracted, inventoried, classified or mapped.
 5. The document access and completeness requirements in section 2 were followed.
 6. DOCX-specific or PDF-specific extraction requirements were followed, as applicable.
-7. The section inventory was built from current-run non-comment `Doco` content only.
-8. Solution-section eligibility was applied before using the catalog for relevance assessment or suggested-control matching.
-9. Excluded non-solution sections were not mapped and were not marked as `No action-register ISM control identified`.
-10. Explicit valid ISM references in excluded non-solution sections were counted as excluded and not mapped, even if the same control also appeared in an eligible section.
-11. Explicit valid ISM references in unassigned non-section content were counted as unassigned and not mapped.
-12. Existing explicit controls in eligible solution sections were preserved and relevance-checked against section evidence and exact catalog statements.
-13. Explicit referenced controls not present in the selected catalog were validated under section 10 before being marked not present.
-14. Suggested alternate controls were used only for the same implementation evidence or intended control objective as an existing reference.
-15. Suggested controls were used only for separate strong implementation evidence.
-16. The mini decision rule was followed: `Same sentence/table row/control-evidence block = alternate candidate; different implementation detail = additional candidate.`
-17. Dedicated control-mapping, compliance-mapping or traceability tables were assessed using the same table row as the relevant control-evidence block only.
-18. Suggested controls satisfied the action-register evidence-led matching gates in section 14.
-19. Optional review candidates, if produced, remained outside the ISM Action Register and were included only where the section was eligible, implementation-specific evidence existed, the candidate control was present in the selected catalog, and the candidate failed inclusion only because the evidence was not direct enough, specific enough, or complete enough for the final action register.
-20. Optional review candidates were not broad keyword-only, assumption-based, good-practice, replacement, successor, related-control or speculative items.
-21. Optional review candidate caps were followed: no more than one per eligible section unless there were two clearly separate implementation-specific evidence items, and no more than two for any eligible section.
-22. No weak, generic, keyword-only or assumption-based mappings were included.
-23. Description columns were populated according to section 18.
-24. Hierarchy columns were populated for the control being actioned in each row, using nearest available catalog ancestor titles and leaving ambiguous higher-level fields blank rather than guessing.
-25. For Suggested Alternate Control rows, the guideline, subsection and topic columns describe the suggested alternate control, not the existing referenced control.
-26. Trigger Phrase was populated for every final action-register row.
-27. Output mode was followed: `Full coverage strict`, `Full coverage`, or `Mapped controls only`.
-28. Optional Review Candidate rows were not counted as action-register rows, and eligible sections with only optional review candidates still received a `No action-register ISM control identified` row unless Output mode was `Mapped controls only`.
-29. The validation summary output only the selected catalog source value and selected retrieval method value, not both options.
-30. If file creation is tool-supported, Excel workbook output was produced.
-31. If Excel output was produced, the workbook was named `ISM_Control_Action_Register.xlsx`, or a numeric suffix was appended only if a filename collision occurred.
-32. If Excel output was produced, the `ISM Action Register` worksheet columns exactly match the columns and column order specified in section 22.
-33. If Excel output was produced, the workbook contains `Validation Summary`, `Reader Guide`, `ISM Action Register`, `Optional Review Candidates` only if `Optional review candidates = On` and optional candidates were produced, and `Malformed References` only if malformed references were found.
-34. If Excel output was produced, the worksheets appear in the required order.
-35. If Excel output was produced, the chat response did not duplicate the full workbook contents.
-36. If Excel output was unavailable, CSV-style fenced text was used for the action register with the same columns and column order specified in section 22.
-37. No separate section inventory was output.
-38. If output could not fit, the response stopped at a complete row and used the required incomplete-output continuation statement.
+7. The canonical `Section Eligibility Ledger` was built from current-run non-comment `Doco` body content only.
+8. Only true body numbered section headings were counted as `Numbered Doco sections identified`; table of contents entries, page numbers, figure numbers, table numbers, numbered lists, row numbers, requirement IDs, control IDs, repeated headers or footers, document version numbers and ISM control numbers were not counted as sections.
+9. Parent and child sections were counted separately only where both appeared as body numbered section headings.
+10. Child-section content was not rolled up into parent-section eligibility.
+11. Parent-section content was not used to make child sections eligible, except for minimal heading context needed to understand the child section.
+12. Every canonical numbered section was classified exactly once as either `Eligible solution section` or `Excluded non-solution section`.
+13. Solution-section eligibility was applied before using the catalog for relevance assessment or suggested-control matching.
+14. The mandatory section-count reconciliation passed: `Numbered Doco sections identified = Eligible solution sections + Excluded non-solution sections`.
+15. For `Full coverage strict` and `Full coverage`, every eligible solution section is represented in the ISM Action Register by at least one action-register row.
+16. Optional Review Candidate rows were not counted as ISM Action Register representation.
+17. Excluded non-solution sections were not mapped and were not marked as `No action-register ISM control identified`.
+18. Explicit valid ISM references in excluded non-solution sections were counted as excluded and not mapped, even if the same control also appeared in an eligible section.
+19. Explicit valid ISM references in unassigned non-section content were counted as unassigned and not mapped.
+20. Existing explicit controls in eligible solution sections were preserved and relevance-checked against section evidence and exact catalog statements.
+21. Explicit referenced controls not present in the selected catalog were validated under section 10 before being marked not present.
+22. Suggested alternate controls were used only for the same evidence cluster or intended control objective as an existing reference.
+23. Suggested controls were used only for separate direct or substantive implementation evidence.
+24. The mini decision rule was followed: `Same evidence cluster or same intended control objective and better fit = Suggested alternate control; different implementation detail = Suggested control; same evidence cluster and complementary control, not better fit = Suggested control.`
+25. Dedicated control-mapping, compliance-mapping or traceability tables were assessed using the same table row as the primary evidence block, plus any directly referenced eligible numbered section, requirement row, design row or implementation note.
+26. Suggested controls satisfied the action-register evidence-led matching gates in section 14, including the Suggested-control precision gate and the control-statement element check.
+27. The three-pass local candidate search was performed against the selected local catalog index only, without web search, prior knowledge or external sources, and control-intent translation was used only for candidate discovery, not final Suggested-control justification.
+28. Optional review candidates, if produced, remained outside the ISM Action Register and were included as plausible, section-specific, implementation-evidence-based near matches where the section was eligible, the candidate control was present in the selected catalog, and the missing evidence, weak directness, incomplete implementation detail, partial specificity or uncertainty was clearly stated.
+29. Optional review candidates were not broad keyword-only, assumption-based, good-practice, replacement, successor, related-control or speculative items.
+30. Optional review candidate caps were followed: no more than one per eligible section unless there were two clearly separate implementation-specific evidence items, and no more than two for any eligible section.
+31. No weak, generic, keyword-only, product-name-only or assumption-based mappings were included.
+32. Description columns were populated according to section 18.
+33. Hierarchy columns were populated for the control being actioned in each row, using nearest available catalog ancestor titles and leaving ambiguous higher-level fields blank rather than guessing.
+34. For Suggested Alternate Control rows, the guideline, subsection and topic columns describe the suggested alternate control, not the existing referenced control.
+35. Trigger Phrase was populated for every final action-register row.
+36. Output mode was followed: `Full coverage strict`, `Full coverage`, or `Mapped controls only`.
+37. Optional Review Candidate rows were not counted as action-register rows, and eligible sections with only optional review candidates still received a `No action-register ISM control identified` row unless Output mode was `Mapped controls only`.
+38. The validation summary output only the selected catalog source value and selected retrieval method value, not both options.
+39. The validation summary included `Section count reconciliation passed` and `Eligible-section action-register coverage passed` using the rules in section 20.
+40. If file creation is tool-supported, Excel workbook output was produced.
+41. If Excel output was produced, the workbook was named `ISM_Control_Action_Register.xlsx`, or a numeric suffix was appended only if a filename collision occurred.
+42. If Excel output was produced, the `ISM Action Register` worksheet columns exactly match the columns and column order specified in section 22.
+43. If Excel output was produced, the workbook contains `Validation Summary`, `Reader Guide`, `Section Eligibility Ledger`, `ISM Action Register`, `Optional Review Candidates` only if `Optional review candidates = On` and optional candidates were produced, and `Malformed References` only if malformed references were found.
+44. If Excel output was produced, the worksheets appear in the required order.
+45. If Excel output was produced, the chat response did not duplicate the full workbook contents.
+46. If Excel output was unavailable, CSV-style fenced text was used for the action register with the same columns and column order specified in section 22.
+47. No separate section inventory was output in chat; if Excel output was produced, the `Section Eligibility Ledger` worksheet was included only as the audit worksheet required by section 23.
+48. If output could not fit, the response stopped at a complete row and used the required incomplete-output continuation statement.
 
 Do not output this self-check unless requested.
