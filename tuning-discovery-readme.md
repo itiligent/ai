@@ -7,14 +7,6 @@ Use a **new chat for each run**. Attach only the files needed for that run.
 
 Use the **same ISM catalog source every time**. Best option: upload the same ASD OSCAL ISM JSON/YAML catalog file each run. Do not let one run use an uploaded catalog and another use a URL or fallback.
 
-Use clear filenames, for example:
-
-* `Doco.docx`
-* `ISM_catalog.yaml` or `ISM_catalog.json`
-* `Run1_Frozen_Section_Ledger.xlsx`
-* `Run2_Mapping_Baseline.xlsx`
-* `Run3_Mapping_Test.xlsx`
-
 ## Run 1 — create the frozen ledger only
 
 Purpose: create the stable section/evidence baseline. This run must **not** produce suggested controls, alternates or optional candidates.
