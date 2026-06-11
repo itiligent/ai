@@ -322,30 +322,11 @@ Provide:
 
    * whether Run 3 can be accepted as repeatable against Run 2;
    * whether further prompt changes are required;
-   * whether the v8 alternate-control audit is adequate.
+   * whether the ISM-Control-Discovery-Prompt.txt alternate-control audit is adequate.
 
 ```
 
-Minimum pass criteria:
 
-```text
-Cross-run ledger hash matched = Yes
-Cross-run action decision hash matched = Yes
-Candidate pool hash = same as Run 2
-Action decision hash = same as Run 2
-Candidate Assessment Ledger rows = same as Run 2
-ISM Action Register rows = same as Run 2
-Suggested alternate control rows = same as Run 2
-Suggested control rows = same as Run 2
-Optional Review Candidate rows = same as Run 2
-```
-
-Then compare these worksheets between Run 2 and Run 3:
-
-```text
-Candidate Assessment Ledger
-ISM Action Register
-Optional Review Candidates
 Malformed References
 Validation Summary / Repeatability Audit
 ```
