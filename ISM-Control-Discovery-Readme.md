@@ -1,4 +1,4 @@
-## Deterministic ISM Control Mapping | Prompt Repeatability Tuning & Testing
+## Deterministic ISM Control Mapping | Prompt Repeatability Audit & Testing
 - **ISM-Control-Discovery-Prompt.txt** is a repeatability-hardened prompt for ASD ISM control mapping.
 - Scans and extracts document sections into a frozen Section Eligibility Ledger.
 - Creates stable Evidence Cluster IDs for security-relevant document content.
