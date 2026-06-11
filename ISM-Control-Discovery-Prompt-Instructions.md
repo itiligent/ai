@@ -33,7 +33,7 @@ Create a new frozen ledger when:
 
 ---
 
-Before running the prompt, set:
+Before running the prompt, in `ISM-Control-Discovery-Prompt.txt` set:
 
 ```text
 Operating mode = `Section ledger only`
@@ -76,7 +76,7 @@ Run1_Frozen_Section_Ledger.xlsx
 
 ## Step 2: Map ISM controls from the frozen ledger
 
-Before running the prompt, set:
+Before running the prompt, in `ISM-Control-Discovery-Prompt.txt` set:
 
 ```text
 Operating mode = `Mapping from supplied frozen ledger`
