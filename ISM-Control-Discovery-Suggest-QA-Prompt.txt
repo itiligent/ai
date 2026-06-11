@@ -36,7 +36,7 @@ Allowed output modes are:
 
 `Mapped controls only` means rows are output only for valid explicit existing controls, suggested alternate controls and suggested controls. Omit `No action-register ISM control identified` rows from the final action register, but still include the validation count of eligible solution sections with no clear control.
 
-When `Output mode = Full coverage strict` or `Output mode = Full coverage`, include every eligible solution section. Do not add a `No action-register ISM control identified` row for an eligible section that already has an `Existing control already in Doco`, `Suggested alternate control`, or `Suggested control` row.
+When `Output mode = Full coverage strict` or `Output mode = Full coverage`, include every eligible solution section. Do not add a `No action-register ISM control identified` row for an eligible section that already has an `Existing control in doc`, `Suggested alternate control`, or `Suggested control` row.
 
 Review the attached document **`Doco`** in the context of the Australian Government **Information Security Manual (ISM)**.
 
@@ -661,7 +661,7 @@ Use these meanings:
 
 Where an explicit ISM reference appears in a dedicated control-mapping, compliance-mapping or traceability table, treat the same table row as the relevant control-evidence block. Use only the evidence in that row and any directly referenced eligible numbered section. Do not use other rows in the table as evidence for that control.
 
-For every `Existing control already in Doco` row, assign one of the following `Existing Control Finding` values:
+For every `Existing control in doc` row, assign one of the following `Existing Control Finding` values:
 
 * `No issue identified`;
 * `Minor relevance concern`;
@@ -719,7 +719,7 @@ Only if all checks confirm there is no exact normalised ID match may the row be 
 
 For finalised not-present explicitly referenced rows, populate:
 
-* `Output Category` = `Existing control already in Doco`;
+* `Output Category` = `Existing control in doc`;
 * `Existing Control` = normalised extracted control ID;
 * `Existing Control Finding` = `Catalog validation issue`;
 * `Action to Take` = `Catalog validation review required`;
@@ -738,7 +738,7 @@ Do not output detailed validation notes unless requested.
 
 Use only the following `Output Category` values in the final output:
 
-* `Existing control already in Doco`;
+* `Existing control in doc`;
 * `Suggested alternate control`;
 * `Suggested control`;
 * `No action-register ISM control identified`.
@@ -758,11 +758,11 @@ Apply the action values as follows:
 
 | Output Category                           | Condition                                                                 | Action to Take                                                  |
 | ----------------------------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| Existing control already in Doco          | Existing referenced control has finding `No issue identified`             | Keep existing control                                           |
-| Existing control already in Doco          | Existing referenced control has finding `Minor relevance concern`         | Review existing control                                         |
-| Existing control already in Doco          | Existing referenced control has finding `Potentially incorrect reference` | Review existing control                                         |
-| Existing control already in Doco          | Existing referenced control has finding `Insufficient evidence`           | Review existing control                                         |
-| Existing control already in Doco          | Existing referenced control has finding `Catalog validation issue`        | Catalog validation review required                              |
+| Existing control in doc                   | Existing referenced control has finding `No issue identified`             | Keep existing control                                           |
+| Existing control in doc                   | Existing referenced control has finding `Minor relevance concern`         | Review existing control                                         |
+| Existing control in doc                   | Existing referenced control has finding `Potentially incorrect reference` | Review existing control                                         |
+| Existing control in doc                   | Existing referenced control has finding `Insufficient evidence`           | Review existing control                                         |
+| Existing control in doc                   | Existing referenced control has finding `Catalog validation issue`        | Catalog validation review required                              |
 | Suggested alternate control               | Better fitting control suggested for an existing referenced control       | Replace or supplement existing control with suggested alternate |
 | Suggested control                         | New control suggested from separate direct, defensible section evidence   | Add new control                                                 |
 | No action-register ISM control identified | Eligible solution section has no existing or suggested control            | No action — no action-register ISM control identified           |
@@ -771,7 +771,7 @@ Do not use free-text action values in the final action register.
 
 Do not hide or remove existing controls from eligible solution sections of `Doco`, even where they are partially aligned, misaligned, unsupported or not present in the selected ASD OSCAL ISM catalog.
 
-Do not use `Replace or supplement existing control with suggested alternate` for an `Existing control already in Doco` row. Use `Review existing control` for the existing-control row, except where the finding is `No issue identified` or `Catalog validation issue`. Use `Replace or supplement existing control with suggested alternate` only on the separate `Suggested alternate control` row where an evidence-led, direct and defensible alternate is identified.
+Do not use `Replace or supplement existing control with suggested alternate` for an `Existing control in doc` row. Use `Review existing control` for the existing-control row, except where the finding is `No issue identified` or `Catalog validation issue`. Use `Replace or supplement existing control with suggested alternate` only on the separate `Suggested alternate control` row where an evidence-led, direct and defensible alternate is identified.
 
 Do not treat a suggested alternate control as an automatic replacement. It is a quality-review recommendation. The final action wording must allow the document owner to decide whether to replace, supplement or retain the original reference.
 
@@ -1143,7 +1143,7 @@ Populate description columns as follows:
 
 | Output Category                           | Existing Control Description                                                                                                                    | Suggested Control Description                                                  |
 | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Existing control already in Doco          | Populate with the exact catalog statement for the existing referenced control, or `Not found in selected ASD OSCAL ISM catalog` if not present. | blank                                                                          |
+| Existing control in doc                   | Populate with the exact catalog statement for the existing referenced control, or `Not found in selected ASD OSCAL ISM catalog` if not present. | blank                                                                          |
 | Suggested alternate control               | Populate with the exact catalog statement for the existing referenced control where available.                                                  | Populate with the exact catalog statement for the suggested alternate control. |
 | Suggested control                         | blank                                                                                                                                           | Populate with the exact catalog statement for the Suggested control.           |
 | No action-register ISM control identified | blank                                                                                                                                           | blank                                                                          |
@@ -1162,7 +1162,7 @@ Sort rows in document order by `Doco Numbered Section / Subsection`.
 
 Within the same section, sort rows in this order:
 
-1. `Existing control already in Doco`;
+1. `Existing control in doc`;
 2. `Suggested alternate control`;
 3. `Suggested control`;
 4. `No action-register ISM control identified`.
@@ -1281,7 +1281,7 @@ If the heading is unclear, provide a concise topic summary based only on the sec
 
 Use only:
 
-* `Existing control already in Doco`;
+* `Existing control in doc`;
 * `Suggested alternate control`;
 * `Suggested control`;
 * `No action-register ISM control identified`.
@@ -1304,7 +1304,7 @@ Leave blank for `No action-register ISM control identified` rows.
 
 #### Existing Control Finding
 
-Populate this for `Existing control already in Doco` rows.
+Populate this for `Existing control in doc` rows.
 
 For `Suggested alternate control` rows, repeat the finding for the existing control being reviewed.
 
@@ -1352,7 +1352,7 @@ Use the description-column population rules in section 18.
 
 Populate from the selected ASD OSCAL ISM catalog for the control being actioned in the row.
 
-For `Existing control already in Doco` rows, these hierarchy fields apply to the existing referenced control.
+For `Existing control in doc` rows, these hierarchy fields apply to the existing referenced control.
 
 For `Suggested alternate control` rows, these hierarchy fields apply to the suggested alternate control, not the existing referenced control.
 
