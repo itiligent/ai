@@ -3,7 +3,7 @@
 - Scans and extracts document sections into a frozen Section Eligibility Ledger.
 - Creates stable Evidence Cluster IDs for security-relevant document content.
 - Maps existing ISM references already noted in a document.
-- Suggests additional controls only where evidence in the scanned document supports them.
+- Suggests additional ISM controls only where the reviewed document contains high-confidence evidence supporting their applicability.
 - Reviews weak existing controls and records possible alternate-control decisions.
 - Separates extraction tasks from mapping tasls to reduce inconsistent LLM results.
    - Uses a three-run test pattern:
