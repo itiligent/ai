@@ -1,5 +1,5 @@
 
-## Before you start
+## Before you start..
 
 #### [Download the ISM-Control-Discovery-Prompt.txt](sandbox:/mnt/data/ISM-Control-Discovery-Action-Register-Prompt-ISM-Control-Discovery-Promp-repeatability-hardened.txt)
 
