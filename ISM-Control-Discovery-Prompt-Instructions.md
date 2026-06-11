@@ -14,7 +14,7 @@ Step 2: Operating mode = `Mapping from supplied frozen ledger`
 
 ---
 
-## Why a 2 Step approach is needed
+## Why A 2 Step Approach Is Needed
 
 ISM control mapping can vary significantly if the LLM is allowed to re-extract and reinterpret the document while it works. This can cause sections, evidence and control relevance to shift during a single mapping run, reducing consistency.
 
@@ -23,7 +23,7 @@ This 2 step workflow avoids that variability by freezing the document structure 
 ---
 
 
-## Step 1: Create a frozen ledger
+## Step 1: Create A Frozen Ledger
 
 Create a new frozen ledger when:
 
@@ -74,7 +74,7 @@ Run1_Frozen_Section_Ledger.xlsx
 
 ---
 
-## Step 2: Map ISM controls from the frozen ledger
+## Step 2: Map ISM Controls From The Frozen Ledger (not the docx/pdf document)
 
 Before running the prompt, in `ISM-Control-Discovery-Prompt.txt` set:
 
