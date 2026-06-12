@@ -112,7 +112,7 @@ Attach only:
 ### Prompt message
 
 ```text
-You are reviewing repeatability and drift between two ISM mapping workbooks produced from the same frozen Section Eligibility Ledger using `ISM-Control-Discovery-Prompt`.
+You are reviewing repeatability and drift between two ISM mapping workbooks produced from the same frozen Section Eligibility Ledger using `ISM-Mapper-Prompt.txt`.
 
 Inputs supplied in this run:
 
@@ -234,7 +234,7 @@ Provide:
 
 4. Root-cause analysis of any meaningful drift.
 
-5. Specific recommendations to improve `ISM-Control-Discovery-Prompt`, if needed.
+5. Specific recommendations to improve `ISM-Mapper-Prompt.txt`, if needed.
 
 6. Final statement confirming:
 
