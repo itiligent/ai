@@ -111,13 +111,13 @@ Perform the mapping pass only and create the Excel workbook output.
 
 Save the workbook as:
 
-`Run2_ISM_Mapping_Output.xlsx`
+`Run2_Mapping_Baseline.xlsx`
 ```
 
 Download the ISM mapping output and save it as:
 
 ```text
-Run2_ISM_Mapping_Output.xlsx
+Run2_Mapping_Baseline.xlsx
 ```
 
 ---
