@@ -18,7 +18,7 @@ Download [your preffered ISM version (in JSON format):](https://github.com/Austr
 Operating mode = `Section ledger only`
 ```
 
-**Start a new chat..*
+**Start a new chat..**
 
 Attach only:
 
@@ -74,7 +74,7 @@ Run1-Frozen-Section-Ledger.xlsx
 Operating mode = `Mapping from supplied frozen ledger`
 ```
 
-**Start a new chat..*
+**Start a new chat..**
 
 Attach only:
 
