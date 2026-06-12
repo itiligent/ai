@@ -20,7 +20,7 @@ Download the required files:
 | `ISM_catalog.json` or `ISM_catalog.yaml` | [ASD OSCAL ISM releases](https://github.com/AustralianCyberSecurityCentre/ism-oscal/releases)                      |
 | Source document                          | The DOCX or PDF you want to assess                                                                                 |
 
-Use the same ISM catalog file for both workflow steps.
+
 
 ---
 
