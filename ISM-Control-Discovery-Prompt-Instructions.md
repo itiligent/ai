@@ -58,15 +58,28 @@ Use this message:
 Run ISM-Control-Discovery-Prompt.txt as a prompt.
 
 Use the attached Doco as `Doco`.
+Use the attached ISM_catalog.json as the authoritative ASD OSCAL ISM catalog.
 
 Set:
-Operating mode = `Section ledger only`
+Operating mode = Section ledger only
 
 Create the Excel workbook output and save it as:
 
-`Run1_Frozen_Section_Ledger.xlsx`
+Run1_Frozen_Section_Ledger.xlsx
 
-Stop after creating and freezing the Section Eligibility Ledger and Evidence Cluster Ledger. Do not perform mapping, suggested controls, suggested alternate controls or optional review candidates.
+Stop after creating and freezing the Section Eligibility Ledger and Evidence Cluster Ledger.
+
+Do not perform mapping.
+
+Do not perform existing-control quality review.
+
+Do not perform suggested controls.
+
+Do not perform suggested alternate controls.
+
+Do not create optional review candidates.
+
+The output workbook must contain the frozen Section Eligibility Ledger and Evidence Cluster Ledger required for later mapping-from-ledger runs.
 ```
 
 Download the output and save it as:
@@ -93,6 +106,7 @@ Attach only:
 1. ISM-Control-Discovery-Prompt.txt
 2. The same ASD OSCAL ISM catalog JSON/YAML used in Step 1
 3. Run1_Frozen_Section_Ledger.xlsx
+* Do not attach the original Doco *
 ```
 
 Use this message:
@@ -103,16 +117,29 @@ Run ISM-Control-Discovery-Prompt.txt as a prompt.
 Set:
 Operating mode = `Mapping from supplied frozen ledger`
 
-Use `Run1_Frozen_Section_Ledger.xlsx` as the authoritative frozen Section Eligibility Ledger and Evidence Cluster Ledger.
+Use the attached ISM_catalog.json as the authoritative ASD OSCAL ISM catalog.
 
+Use Run1_Frozen_Section_Ledger.xlsx as the authoritative frozen Section Eligibility Ledger and Evidence Cluster Ledger.
 
-Do not re-extract Doco. Do not rebuild the section ledger. Do not create new Evidence Cluster IDs.
+Do not attach, inspect, read, parse, OCR, search or re-extract the original Doco.
 
-Perform the mapping pass only and create the Excel workbook output.
+Do not rebuild the section ledger.
 
-Save the workbook as:
+Do not reinterpret section headings.
 
-`Run2_Mapping_Baseline.xlsx`
+Do not reclassify section eligibility.
+
+Do not create, rename, replace or modify any SEL-* Ledger Row IDs.
+
+Do not create, rename, replace or modify any EC-* Evidence Cluster IDs.
+
+Copy the Section Eligibility Ledger and Evidence Cluster Ledger worksheets from Run1_Frozen_Section_Ledger.xlsx into the output workbook unchanged, except for workbook styling or formatting.
+
+Perform the mapping pass only from the supplied frozen ledger and selected catalog.
+
+Create the Excel workbook output and save it as:
+
+Run2_Mapping_Baseline.xlsx
 ```
 
 Download the ISM mapping output and save it as:
@@ -122,6 +149,46 @@ Run2_Mapping_Baseline.xlsx
 ```
 
 ---
+
+
+Run 3:
+```
+Run `ISM-Control-Discovery-Prompt` as a prompt.
+
+Set:
+
+Operating mode = `Mapping from supplied frozen ledger`
+
+Use the attached `ISM_catalog.json` as the authoritative ASD OSCAL ISM catalog.
+
+Use `Run1_Frozen_Section_Ledger.xlsx` as the authoritative frozen `Section Eligibility Ledger` and `Evidence Cluster Ledger`.
+
+Use `Run2_Mapping_Baseline.xlsx` as the cross-run repeatability baseline workbook.
+
+Do not attach, inspect, read, parse, OCR, search or re-extract the original Doco.
+
+Do not rebuild the section ledger.
+
+Do not reinterpret section headings.
+
+Do not reclassify section eligibility.
+
+Do not create, rename, replace or modify any `SEL-*` Ledger Row IDs.
+
+Do not create, rename, replace or modify any `EC-*` Evidence Cluster IDs.
+
+Copy the `Section Eligibility Ledger` and `Evidence Cluster Ledger` worksheets from `Run1_Frozen_Section_Ledger.xlsx` into the output workbook unchanged, except for workbook styling or formatting.
+
+Perform the mapping pass only from the supplied frozen ledger and selected catalog.
+
+Compare stable mapping artefacts against `Run2_Mapping_Baseline.xlsx`.
+
+Create the Excel workbook output and save it as:
+
+`Run3_ISM_Mapping_Output.xlsx`
+```
+
+
 
 ### Ad-Hoc Use
 
