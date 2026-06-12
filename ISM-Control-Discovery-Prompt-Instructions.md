@@ -36,7 +36,7 @@ This 2 step workflow avoids that variability by freezing the document structure 
 
 ---
 
-Before running the prompt, in `ISM-Control-Discovery-Prompt.txt` set:
+Before running the prompt, in the downloaded prompt file` set:
 
 ```text
 Operating mode = `Section ledger only`
