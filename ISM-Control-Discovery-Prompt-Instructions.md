@@ -23,7 +23,7 @@ This 2 step workflow avoids that variability by freezing the document structure 
 ---
 
 
-## Step 1: Create A Frozen Section Ledger Index
+## Step 1: Create A Frozen Document Ledger/Index
 
 - Frozen ledger = fixed document map + fixed evidence index
 - Freezes the document structure
@@ -90,7 +90,7 @@ Run1-Frozen-Section-Ledger.xlsx
 
 ---
 
-## Step 2: Baseline ISM Controls From The Frozen Section Ledger Index
+## Step 2: Map ISM Controls From The Frozen Section Ledger Index
 
 Before running the prompt, in `ISM-Control-Discovery-Prompt.txt` set:
 
