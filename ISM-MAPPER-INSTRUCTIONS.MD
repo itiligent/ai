@@ -1,6 +1,8 @@
 ## ISM Mapper Workflow
 Read the [readme first](https://github.com/itiligent/ISM-Mapper/blob/main/Readme.md)
+
 Download the [Promptname.txt](https://raw.githubusercontent.com/itiligent/ai/refs/heads/main/ISM-Control-Discovery-Prompt.txt) 
+
 Download [your preffered ISM version (in JSON format):](https://github.com/AustralianCyberSecurityCentre/ism-oscal/releases)
 
 For controlled and repeatable mapping, the prompt files's `Operating mode` is set differenty for each step:
