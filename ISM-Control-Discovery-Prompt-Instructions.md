@@ -139,19 +139,24 @@ Perform the mapping pass only from the supplied frozen ledger and selected catal
 
 Create the Excel workbook output and save it as:
 
-Run2_Mapping_Baseline.xlsx
+Run2_Mapping_Output.xlsx
 ```
 
 Download the ISM mapping output and save it as:
 
 ```text
-Run2_Mapping_Baseline.xlsx
+Run2_Mapping_Output.xlsx
 ```
 
 ---
 
 
 Run 3:
+1. The ISM-Control-Discovery-Prompt
+2. The same ASD OSCAL ISM catalog JSON/YAML used in Runs 1 and 2
+3. Run1_Frozen_Section_Ledger.xlsx
+4. Run2_Mapping_Output.xlsx
+
 ```
 Run `ISM-Control-Discovery-Prompt` as a prompt.
 
@@ -163,7 +168,7 @@ Use the attached `ISM_catalog.json` as the authoritative ASD OSCAL ISM catalog.
 
 Use `Run1_Frozen_Section_Ledger.xlsx` as the authoritative frozen `Section Eligibility Ledger` and `Evidence Cluster Ledger`.
 
-Use `Run2_Mapping_Baseline.xlsx` as the cross-run repeatability baseline workbook.
+Use `Run2_Mapping_Output.xlsx` as the cross-run repeatability baseline workbook.
 
 Do not attach, inspect, read, parse, OCR, search or re-extract the original Doco.
 
@@ -185,7 +190,7 @@ Compare stable mapping artefacts against `Run2_Mapping_Baseline.xlsx`.
 
 Create the Excel workbook output and save it as:
 
-`Run3_ISM_Mapping_Output.xlsx`
+`Run3_ISM_Mapping_Repeated-Test.xlsx`
 ```
 
 
