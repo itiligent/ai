@@ -1,4 +1,4 @@
-# 🛡️ ISM Control Discovery and Evidence Mapping
+# 🛡️ Document-to-ISM Control Mapping
 
 > A repeatable workflow for discovering evidence and mapping Australian Government Information Security Manual (ISM) controls from source documents.
 
