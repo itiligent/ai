@@ -60,6 +60,7 @@ Run ISM-Control-Discovery-Prompt as a prompt.
 Use the attached Doco as `Doco`.
 
 Set:
+
 Operating mode = Section ledger only
 
 Create the Excel workbook output and save it as:
@@ -114,6 +115,7 @@ Use this message:
 Run ISM-Control-Discovery-Prompt as a prompt.
 
 Set:
+
 Operating mode = `Mapping from supplied frozen ledger`
 
 Use Run1-Frozen-Section-Ledger.xlsx as the authoritative frozen Section Eligibility Ledger and Evidence Cluster Ledger.
