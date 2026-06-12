@@ -21,7 +21,10 @@ Download the required files:
 | Source document                          | The DOCX or PDF you want to assess                                                                                 |
 
 
-
+<a href="https://raw.githubusercontent.com/itiligent/ISM-Mapper/main/ISM-Mapper-Prompt.txt"
+   download="ISM-Mapper-Prompt.txt">
+   Click to Download File
+</a>
 ---
 
 ## 🧊 Step 1: Create a Frozen Document Ledger
