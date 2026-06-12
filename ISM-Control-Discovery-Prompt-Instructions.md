@@ -150,11 +150,18 @@ Run2-ISM-Mapping-Output.xlsx
 ---
 
 
-Run 3:
+## Run 3 (Optional)
+
+This step is only needed for prompt debugging and repeatability testing:
+
+Attach only:
+
+```text
 1. The ISM-Control-Discovery-Prompt
 2. The same ASD OSCAL ISM catalog JSON/YAML used in Runs 1 and 2
 3. Run1-Frozen-Section-Ledger.xlsx
 4. Run2-ISM-Mapping-Output.xlsx
+```
 
 ```
 Run `ISM-Control-Discovery-Prompt` as a prompt.
