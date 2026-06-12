@@ -20,10 +20,13 @@ Download the required files:
 | `ISM_catalog.json` or `ISM_catalog.yaml` | [ASD OSCAL ISM releases](https://github.com/AustralianCyberSecurityCentre/ism-oscal/releases)                      |
 | Source document                          | The DOCX or PDF you want to assess                                                                                 |
 
-<a href="./ISM-Mapper-Prompt.txt"
-   download="ISM-Mapper-Prompt.txt">
-   Download ISM Mapper Prompt
-</a>
+```markdown
+| File                                     | Source                                                                                                             |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `ISM-Mapper-Prompt.txt`                  | <a href="./ISM-Mapper-Prompt.txt" download="ISM-Mapper-Prompt.txt">Download prompt</a>                            |
+| `ISM_catalog.json` or `ISM_catalog.yaml` | [ASD OSCAL ISM releases](https://github.com/AustralianCyberSecurityCentre/ism-oscal/releases)                      |
+| Source document                          | The DOCX or PDF you want to assess                                                                                 |
+```
 
 ---
 
