@@ -23,13 +23,16 @@ This 2 step workflow avoids that variability by freezing the document structure 
 ---
 
 
-## Step 1: Create A Frozen Ledger Index
+## Step 1: Create A Frozen Section Ledger Index
 
-Create a new frozen ledger when:
+- Frozen ledger = fixed document map + fixed evidence index
+- Freezes the document structure
+- Stops the model from re-reading the document differently each time.
+- Freezes the eligible document sections
+- Locks in which sections are considered relevant for ISM mapping in the second step.
 
-- The document is being scanned for the first time; or
-- The document has changed since the last scan.
-- Do not reuse an old frozen ledger for a changed document.
+> [!NOTE]
+> Do not reuse an old frozen ledger for a changed document, You must create this for each scan
 
 ---
 
@@ -74,7 +77,7 @@ Run1_Frozen_Section_Ledger.xlsx
 
 ---
 
-## Step 2: Map ISM Controls From The Frozen Ledger Index
+## Step 2: Map ISM Controls From The Frozen Section Ledger Index
 
 Before running the prompt, in `ISM-Control-Discovery-Prompt.txt` set:
 
