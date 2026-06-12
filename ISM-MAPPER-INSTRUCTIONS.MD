@@ -28,7 +28,7 @@ Attach only:
 3. The ASD OSCAL ISM catalog JSON/YAML
 ```
 
-Use this message:
+Paste this message:
 
 ```text
 Run Promptname.txt as a prompt.
@@ -85,7 +85,7 @@ Attach only:
 * Do not attach the original Doco *
 ```
 
-Use this message:
+Paste this message:
 
 ```text
 Run  Promptname.txt as a prompt.
