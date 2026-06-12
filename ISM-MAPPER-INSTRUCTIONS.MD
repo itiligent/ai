@@ -16,17 +16,9 @@ Download the required files:
 
 | File                                     | Source                                                                                                             |
 | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `ISM-Mapper-Prompt.txt`                  | [Download prompt](https://raw.githubusercontent.com/itiligent/ai/refs/heads/main/ISM-Mapper-Prompt.txt) |
-| `ISM_catalog.json` or `ISM_catalog.yaml` | [ASD OSCAL ISM releases](https://github.com/AustralianCyberSecurityCentre/ism-oscal/releases)                      |
-| Source document                          | The DOCX or PDF you want to assess                                                                                 |
-
-
-| File                                     | Source                                                                                                             |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | `ISM-Mapper-Prompt.txt`                  | <a href="./ISM-Mapper-Prompt.txt" download="ISM-Mapper-Prompt.txt">Download prompt</a>                            |
 | `ISM_catalog.json` or `ISM_catalog.yaml` | [ASD OSCAL ISM releases](https://github.com/AustralianCyberSecurityCentre/ism-oscal/releases)                      |
 | Source document                          | The DOCX or PDF you want to assess                                                                                 |
-
 
 ---
 
