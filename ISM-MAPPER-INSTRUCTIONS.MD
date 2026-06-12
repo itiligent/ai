@@ -1,34 +1,52 @@
-## ISM Mapper Workflow
-Read the [readme first](https://github.com/itiligent/ISM-Mapper/blob/main/Readme.md)
+## 🧭 ISM Mapper Workflow
 
-Download [ISM-Mapper-Prompt.txt](https://raw.githubusercontent.com/itiligent/ai/refs/heads/main/ISM-Control-Discovery-Prompt.txt) 
+> Create a frozen evidence ledger first, then map ISM controls from that fixed ledger.
 
-Download [ISM_catalog.json:](https://github.com/AustralianCyberSecurityCentre/ism-oscal/releases) from your preffered ISM release
-
-
+[![Workflow](https://img.shields.io/badge/workflow-frozen%20ledger%20%2B%20mapping-blue)](#-ism-mapper-workflow)
+[![Output](https://img.shields.io/badge/output-XLSX-success)](#-workflow-outputs)
+[![Source](https://img.shields.io/badge/source-ASD%20OSCAL%20ISM-orange)](https://github.com/AustralianCyberSecurityCentre/ism-oscal/releases)
 
 ---
 
+## 📘 Before You Start
 
-## Step 1: Create A Frozen Document Ledger
+Read the [README first](https://github.com/itiligent/ISM-Mapper/blob/main/Readme.md).
 
-**Edit the prompt file `Operating mode` setting:**
+Download the required files:
+
+| File                                     | Source                                                                                                             |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `ISM-Mapper-Prompt.txt`                  | [Download prompt](https://raw.githubusercontent.com/itiligent/ai/refs/heads/main/ISM-Control-Discovery-Prompt.txt) |
+| `ISM_catalog.json` or `ISM_catalog.yaml` | [ASD OSCAL ISM releases](https://github.com/AustralianCyberSecurityCentre/ism-oscal/releases)                      |
+| Source document                          | The DOCX or PDF you want to assess                                                                                 |
+
+Use the same ISM catalog file for both workflow steps.
+
+---
+
+## 🧊 Step 1: Create a Frozen Document Ledger
+
+This step reads the source document once and creates a fixed evidence base for later control mapping.
+
+### 1. Set the operating mode
+
+Edit `ISM-Mapper-Prompt.txt` and set:
 
 ```text
 Operating mode = `Section ledger only`
 ```
 
-**Start a new chat..**
+### 2. Start a new chat
 
 Attach only:
 
 ```text
 1. ISM-Mapper-Prompt.txt
-2. The document you want to scan (DOCX/PDF)
-3. The ASD OSCAL ISM catalog JSON/YAML
+2. The document you want to scan, such as DOCX or PDF
+3. The ASD OSCAL ISM catalog JSON or YAML
 ```
 
-Paste this message:
+### 3. Paste this message
 
 ```text
 Run ISM-Mapper-Prompt.txt as a prompt.
@@ -58,7 +76,9 @@ Do not create optional review candidates.
 The output workbook must contain the frozen Section Eligibility Ledger and Evidence Cluster Ledger required for later mapping-from-ledger runs.
 ```
 
-Download the output and save it as:
+### 4. Save the output
+
+Download the workbook and save it as:
 
 ```text
 Run1-Frozen-Section-Ledger.xlsx
@@ -66,29 +86,36 @@ Run1-Frozen-Section-Ledger.xlsx
 
 ---
 
-## Step 2: Map ISM Controls From The Frozen Document Ledger
+## 🗺️ Step 2: Map ISM Controls from the Frozen Ledger
 
-**Edit the prompt file `Operating mode` setting:**
+This step maps ISM controls using only the frozen ledger created in Step 1.
+
+The original document must not be re-attached or re-read.
+
+### 1. Set the operating mode
+
+Edit `ISM-Mapper-Prompt.txt` and set:
 
 ```text
 Operating mode = `Mapping from supplied frozen ledger`
 ```
 
-**Start a new chat..**
+### 2. Start a new chat
 
 Attach only:
 
 ```text
 1. ISM-Mapper-Prompt.txt
-2. The same ASD OSCAL ISM catalog JSON/YAML used in Step 1
+2. The same ASD OSCAL ISM catalog JSON or YAML used in Step 1
 3. Run1-Frozen-Section-Ledger.xlsx
-* Do not attach the original Doco *
 ```
 
-Paste this message:
+> ⚠️ Do not attach the original source document in Step 2.
+
+### 3. Paste this message
 
 ```text
-Run  ISM-Mapper-Prompt.txt as a prompt.
+Run ISM-Mapper-Prompt.txt as a prompt.
 
 Set:
 
@@ -117,7 +144,9 @@ Create the Excel workbook output and save it as:
 Run2-ISM-Mapping-Output.xlsx
 ```
 
-Download the ISM mapping output and save it as:
+### 4. Save the output
+
+Download the ISM mapping workbook and save it as:
 
 ```text
 Run2-ISM-Mapping-Output.xlsx
@@ -125,3 +154,20 @@ Run2-ISM-Mapping-Output.xlsx
 
 ---
 
+## 📦 Workflow Outputs
+
+| Step   | Output Workbook                   | Purpose                                                       |
+| ------ | --------------------------------- | ------------------------------------------------------------- |
+| Step 1 | `Run1-Frozen-Section-Ledger.xlsx` | Frozen Section Eligibility Ledger and Evidence Cluster Ledger |
+| Step 2 | `Run2-ISM-Mapping-Output.xlsx`    | ISM control recommendations mapped from the frozen ledger     |
+
+---
+
+## ✅ Important Rules
+
+* Use the same ISM catalog file in both steps.
+* Do not attach the original document during Step 2.
+* Do not rebuild or reinterpret the frozen ledger during mapping.
+* Keep all `SEL-*` Ledger Row IDs unchanged.
+* Keep all `EC-*` Evidence Cluster IDs unchanged.
+* Treat `Run1-Frozen-Section-Ledger.xlsx` as the authoritative evidence base for Step 2.
