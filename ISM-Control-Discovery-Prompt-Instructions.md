@@ -9,7 +9,7 @@ Step 1: Operating mode = `Section ledger only`
 
 Step 2: Operating mode = `Mapping from supplied frozen ledger`
 
-(A 3rd `Full run` ad-hoc operating mode exists. See bottom.)
+(A 3rd `Full run` ad-hoc operating mode exists, see bottom.)
 ```
 
 ---
