@@ -1,7 +1,7 @@
 ## ISM Mapper Workflow
 Read the [readme first](https://github.com/itiligent/ISM-Mapper/blob/main/Readme.md)
 
-Download [Promptname.txt](https://raw.githubusercontent.com/itiligent/ai/refs/heads/main/ISM-Control-Discovery-Prompt.txt) 
+Download [ISM-Mapper-Prompt.txt](https://raw.githubusercontent.com/itiligent/ai/refs/heads/main/ISM-Control-Discovery-Prompt.txt) 
 
 Download [your preffered ISM version (in JSON format):](https://github.com/AustralianCyberSecurityCentre/ism-oscal/releases)
 
@@ -23,7 +23,7 @@ Operating mode = `Section ledger only`
 Attach only:
 
 ```text
-1. Promptname.txt
+1. ISM-Mapper-Prompt.txt
 2. The document you want to scan (DOCX/PDF)
 3. The ASD OSCAL ISM catalog JSON/YAML
 ```
@@ -31,7 +31,7 @@ Attach only:
 Paste this message:
 
 ```text
-Run Promptname.txt as a prompt.
+Run ISM-Mapper-Prompt.txt as a prompt.
 
 Use the attached Doco as `Doco`.
 
@@ -79,7 +79,7 @@ Operating mode = `Mapping from supplied frozen ledger`
 Attach only:
 
 ```text
-1. Promptname.txt
+1. ISM-Mapper-Prompt.txt
 2. The same ASD OSCAL ISM catalog JSON/YAML used in Step 1
 3. Run1-Frozen-Section-Ledger.xlsx
 * Do not attach the original Doco *
@@ -88,7 +88,7 @@ Attach only:
 Paste this message:
 
 ```text
-Run  Promptname.txt as a prompt.
+Run  ISM-Mapper-Prompt.txt as a prompt.
 
 Set:
 
