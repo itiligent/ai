@@ -23,7 +23,7 @@ This 2 step workflow avoids that variability by freezing the document structure 
 ---
 
 
-## Step 1: Create A Frozen Ledger
+## Step 1: Create A Frozen Ledger Index
 
 Create a new frozen ledger when:
 
@@ -74,7 +74,7 @@ Run1_Frozen_Section_Ledger.xlsx
 
 ---
 
-## Step 2: Map ISM Controls From The Frozen Ledger (not the docx/pdf document)
+## Step 2: Map ISM Controls From The Frozen Ledger Index
 
 Before running the prompt, in `ISM-Control-Discovery-Prompt.txt` set:
 
