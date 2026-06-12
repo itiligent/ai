@@ -47,7 +47,7 @@ Start a new chat.
 Attach only:
 
 ```text
-1. ISM-Control-Discovery-Prompt.txt
+1. ISM-Control-Discovery-Prompt
 2. The document you want to scan (DOCX/PDF)
 3. The ASD OSCAL ISM catalog JSON/YAML
 ```
@@ -55,7 +55,7 @@ Attach only:
 Use this message:
 
 ```text
-Run ISM-Control-Discovery-Prompt.txt as a prompt.
+Run ISM-Control-Discovery-Prompt as a prompt.
 
 Use the attached Doco as `Doco`.
 Use the attached ISM_catalog.json as the authoritative ASD OSCAL ISM catalog.
@@ -103,7 +103,7 @@ Start a new chat.
 Attach only:
 
 ```text
-1. ISM-Control-Discovery-Prompt.txt
+1. ISM-Control-Discovery-Prompt
 2. The same ASD OSCAL ISM catalog JSON/YAML used in Step 1
 3. Run1-Frozen-Section-Ledger.xlsx
 * Do not attach the original Doco *
@@ -112,7 +112,7 @@ Attach only:
 Use this message:
 
 ```text
-Run ISM-Control-Discovery-Prompt.txt as a prompt.
+Run ISM-Control-Discovery-Prompt as a prompt.
 
 Set:
 Operating mode = `Mapping from supplied frozen ledger`
