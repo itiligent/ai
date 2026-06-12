@@ -1,6 +1,6 @@
 ## ISM Control Mapping Workflow
 
-Using [ISM-Control-Discovery-Prompt.txt](https://raw.githubusercontent.com/itiligent/ai/refs/heads/main/ISM-Control-Discovery-Prompt.txt) to map ISM controls from a DOCX or PDF document is a controlled two-step process.
+Using [ISM-Control-Discovery-Prompt](https://raw.githubusercontent.com/itiligent/ai/refs/heads/main/ISM-Control-Discovery-Prompt.txt) to map ISM controls from a DOCX or PDF document is a controlled two-step process.
 
 For controlled and repeatable mapping, the prompt files's `Operating mode` is set differenty for each step:
 
