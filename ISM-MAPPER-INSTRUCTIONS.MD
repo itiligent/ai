@@ -12,7 +12,7 @@ Download [your preffered ISM version (in JSON format):](https://github.com/Austr
 
 ## Step 1: Create A Frozen Document Ledger
 
-**Edit the prompt files `Operating mode` setting:**
+**Edit the prompt file `Operating mode` setting:**
 
 ```text
 Operating mode = `Section ledger only`
@@ -68,7 +68,7 @@ Run1-Frozen-Section-Ledger.xlsx
 
 ## Step 2: Map ISM Controls From The Frozen Document Ledger
 
-**Edit the prompt files `Operating mode` setting:**
+**Edit the prompt file `Operating mode` setting:**
 
 ```text
 Operating mode = `Mapping from supplied frozen ledger`
