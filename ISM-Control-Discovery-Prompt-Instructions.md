@@ -58,7 +58,6 @@ Use this message:
 Run ISM-Control-Discovery-Prompt as a prompt.
 
 Use the attached Doco as `Doco`.
-Use the attached ISM_catalog.json as the authoritative ASD OSCAL ISM catalog.
 
 Set:
 Operating mode = Section ledger only
@@ -117,8 +116,6 @@ Run ISM-Control-Discovery-Prompt as a prompt.
 Set:
 Operating mode = `Mapping from supplied frozen ledger`
 
-Use the attached ISM_catalog.json as the authoritative ASD OSCAL ISM catalog.
-
 Use Run1-Frozen-Section-Ledger.xlsx as the authoritative frozen Section Eligibility Ledger and Evidence Cluster Ledger.
 
 Do not attach, inspect, read, parse, OCR, search or re-extract the original Doco.
@@ -163,8 +160,6 @@ Run `ISM-Control-Discovery-Prompt` as a prompt.
 Set:
 
 Operating mode = `Mapping from supplied frozen ledger`
-
-Use the attached `ISM_catalog.json` as the authoritative ASD OSCAL ISM catalog.
 
 Use `Run1-Frozen-Section-Ledger.xlsx` as the authoritative frozen `Section Eligibility Ledger` and `Evidence Cluster Ledger`.
 
