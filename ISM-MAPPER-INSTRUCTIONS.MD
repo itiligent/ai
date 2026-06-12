@@ -20,11 +20,11 @@ Download the required files:
 | `ISM_catalog.json` or `ISM_catalog.yaml` | [ASD OSCAL ISM releases](https://github.com/AustralianCyberSecurityCentre/ism-oscal/releases)                      |
 | Source document                          | The DOCX or PDF you want to assess                                                                                 |
 
-
-<a href="https://raw.githubusercontent.com/itiligent/ISM-Mapper/main/ISM-Mapper-Prompt.txt"
+<a href="./ISM-Mapper-Prompt.txt"
    download="ISM-Mapper-Prompt.txt">
-   Click to Download File
+   Download ISM Mapper Prompt
 </a>
+
 ---
 
 ## 🧊 Step 1: Create a Frozen Document Ledger
