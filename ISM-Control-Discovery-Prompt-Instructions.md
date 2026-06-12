@@ -150,7 +150,7 @@ Run2-ISM-Mapping-Output.xlsx
 ---
 
 
-## Run 3 (Optional, Repeatabilty Testing Only)
+## Run 3 (Optional, Prompt Debug & Repeatabilty Testing))
 
 Start a new chat.
 
@@ -197,7 +197,7 @@ Create the Excel workbook output and save it as:
 `Run3-ISM-Mapping-Test.xlsx`
 ```
 
-## Run 4 (Optional)
+## Run 4 (Prompt Debug & Repeatabilty Testing)
 
 Start a new chat.
 
