@@ -77,7 +77,7 @@ Run1_Frozen_Section_Ledger.xlsx
 
 ---
 
-## Step 2: Map ISM Controls From The Frozen Section Ledger Index
+## Step 2: Baseline Map ISM Controls From The Frozen Section Ledger Index
 
 Before running the prompt, in `ISM-Control-Discovery-Prompt.txt` set:
 
