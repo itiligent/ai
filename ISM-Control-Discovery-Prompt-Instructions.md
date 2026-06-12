@@ -150,9 +150,9 @@ Run2-ISM-Mapping-Output.xlsx
 ---
 
 
-## Run 3 (Optional)
+## Run 3 (Optional, Repeatabilty Testing Only)
 
-This step is only needed for prompt debugging and repeatability testing:
+Start a new chat.
 
 Attach only:
 
@@ -197,9 +197,8 @@ Create the Excel workbook output and save it as:
 `Run3-ISM-Mapping-Repeat-Test.xlsx`
 ```
 
-## How to judge pass/fail
+## Run 4 (Optional)
 
-Purpose: Comparing the output between Run 2 and Run 3. 
 
 Attach only:
 
