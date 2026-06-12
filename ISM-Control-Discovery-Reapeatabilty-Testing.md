@@ -173,12 +173,17 @@ Use `Run1_Frozen_Section_Ledger.xlsx` as the authoritative frozen Section Eligib
 Use `Run2_Mapping_Baseline.xlsx` as the cross-run repeatability baseline workbook.
 
 Do not re-extract Doco. Do not rebuild the section ledger. Do not create new Evidence Cluster IDs. Perform the mapping pass only and create the Excel workbook output.
+
+Save the workbook as:
+
+`Run3_ISM_Mapping_Check.xlsx`
+
 ```
 
 Download the output and rename it:
 
 ```text
-Run3_Mapping_Test.xlsx
+Run3_ISM_Mapping_Check.xlsx
 ```
 
 ## How to judge pass/fail
@@ -190,7 +195,7 @@ Attach only:
 ```text
 1. The ISM-Control-Discovery-Prompt.txt
 2. Run2_Mapping_Baseline.xlsx
-3. Run3_Mapping_Test.xlsx
+3. Run3_ISM_Mapping_Check.xlsx
 ```
 
 Use this message:
