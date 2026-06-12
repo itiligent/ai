@@ -12,13 +12,13 @@ Download [your preffered ISM version (in JSON format):](https://github.com/Austr
 
 ## Step 1: Create A Frozen Document Ledger
 
-Edit the prompt files's `Operating mode` setting value to:
+**Edit the prompt files's `Operating mode` setting value to:**
 
 ```text
 Operating mode = `Section ledger only`
 ```
 
-Start a new chat.
+**Start a new chat..*
 
 Attach only:
 
@@ -74,7 +74,7 @@ Edit the prompt files's `Operating mode` setting value to:
 Operating mode = `Mapping from supplied frozen ledger`
 ```
 
-Start a new chat.
+**Start a new chat..*
 
 Attach only:
 
@@ -125,8 +125,3 @@ Run2-ISM-Mapping-Output.xlsx
 
 ---
 
-
-
-### Ad-Hoc Use
-
-`Operating mode = Full run` performs extraction, ledger creation and ISM mapping in one pass. Use this where stability and reviewability are less important.
