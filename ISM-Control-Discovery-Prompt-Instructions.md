@@ -105,6 +105,7 @@ Operating mode = `Mapping from supplied frozen ledger`
 
 Use `Run1_Frozen_Section_Ledger.xlsx` as the authoritative frozen Section Eligibility Ledger and Evidence Cluster Ledger.
 
+
 Do not re-extract Doco. Do not rebuild the section ledger. Do not create new Evidence Cluster IDs.
 
 Perform the mapping pass only and create the Excel workbook output.
