@@ -1,4 +1,4 @@
-# Dave's ISM Control Discovery Prompt
+# Dave's ISM Control Discovery Prompt 1.0
 
 `Doco` = `the uploaded DOCX or PDF file`
 
@@ -35,7 +35,7 @@ Output mode = `Full coverage`
 
 Optional review candidates = `On`
 
-Optional review candidate global cap = `20`
+Optional review candidate global cap = `250`
 
 Cross-run repeatability baseline = `Optional current-run supplied baseline workbook or frozen ledger`
 
@@ -150,7 +150,7 @@ The deterministic handoff objects are:
 
 Do not bypass these handoff objects. Do not create final ISM Action Register rows, Optional Review Candidate rows, `No ISM control identified` rows, accepted-candidate decisions or rejected-candidate decisions outside the deterministic ledger process.
 
-### v8 repeatability hardening controls
+### Repeatability hardening controls
 
 The following controls are mandatory and override looser wording elsewhere in the prompt:
 
@@ -158,10 +158,12 @@ The following controls are mandatory and override looser wording elsewhere in th
 2. **No inferred renumbering** — never create, renumber, shift or repair section numbers because an unnumbered heading, file-tree heading, appendix label, figure caption, table caption or styled paragraph appears between numbered sections. If the section number cannot be obtained deterministically from an accepted heading source, do not create a numbered section for that paragraph.
 3. **Ledger ID schema is mandatory** — `Ledger Row ID` must match `^SEL-[0-9]{4}$`; `Candidate Row ID` must match `^CAL-[0-9]{5}$`; `Register Row ID` must match `^IAR-[0-9]{5}$`; `Evidence Cluster ID` must match `^EC-SEL-[0-9]{4}-[PTBSF]-[0-9]{4}-[0-9]{4}-[0-9a-f]{8}$`; `Canonical Section Key` must begin with `SELKEY-`. Any different prefix such as `LED-`, `ECL-`, freeform IDs or sequential evidence IDs is a validation failure.
 4. **Evidence clusters are first-class artefacts** — the `Evidence Cluster Ledger` worksheet is the authoritative cluster handoff. The `Evidence Cluster Inventory` field in the `Section Eligibility Ledger` is a compact summary only and must not be the sole cluster source where Excel output is supported.
-5. **Mechanical eligibility formula** — eligibility must be derived from locked boolean fields, not a narrative judgement alone. A row is eligible only when no hard exclusion applies and all three evidence-triad fields are `Yes`.
+5. **Mechanical eligibility formula** — eligibility must be derived from locked boolean fields, not a narrative judgement alone. A row is eligible only when no hard exclusion applies and either all three evidence-triad fields are `Yes`, or `Direct Bracketed ISM Reference Present = Yes` under the locked bracketed-reference override. The bracketed-reference override applies only to valid normalisable `ISM-####` references inside square brackets in the assigned body text of the numbered section and must not defeat hard exclusions.
 6. **Candidate-ledger completeness** — in `Full run` or `Mapping from supplied frozen ledger`, where `Eligible solution sections > 0`, a zero-row `Candidate Assessment Ledger` is a validation failure unless the run is `Section ledger only` or an explicit hard-stop occurred before mapping.
 7. **Rejected candidates are audit evidence** — every assessed candidate, including rejected candidates, must be recorded. A `No ISM control identified` row is not permitted unless rejected candidates or a locked no-candidate support record prove that candidate discovery was attempted for that section.
 8. **Suggested alternates are anchored and transparent** — every `Suggested alternate control` must identify the specific existing explicit control row it reviews and must use the same `Ledger Row ID` and `Evidence Cluster ID`. Every weak existing-control row must also show whether named alternate candidates were considered, how many were considered, the best rejected alternate where applicable, and the exact reason no alternate was accepted.
+
+   **Unconditional suggested-alternate review audit** — every `Existing control in doc` row, including rows whose finding is `No issue identified`, must have one visible suggested-alternate better-fit review row in the `Candidate Assessment Ledger`. This is an audit/completeness requirement only. It must not loosen the section 12D acceptance gate, must not force a suggested alternate into the `ISM Action Register`, and must not change existing-control quality findings.
 9. **No bare alternate rejection for weak existing controls** — for existing controls with `Minor relevance concern`, `Potentially incorrect reference` or `Insufficient evidence`, the rejection reason `No stronger same-evidence alternate identified` is insufficient unless the Candidate Assessment Ledger also records the alternate discovery method, alternate-candidate count, best rejected alternate control ID where at least one alternate was considered, and the statement-level failure reason.
 10. **Optional candidates are uncertainty overflow only** — Evidence Score `2` may appear only in `Optional Review Candidates` and must record the action-register gate that was not met. It must never be promoted to the ISM Action Register to improve coverage.
 11. **Optional-candidate cap transparency** — when Optional Review Candidates are enabled, report both the number of candidates before the global cap and the number omitted by the cap. Do not hide cap suppression.
@@ -169,7 +171,7 @@ The following controls are mandatory and override looser wording elsewhere in th
 13. **Frozen-ledger metadata is separated from current-run extraction metadata** — in `Mapping from supplied frozen ledger` mode, the current run did not extract `Doco`. Therefore, `Doco extraction performed this run` must be `No`, `Doco body extraction hash` must be `Not applicable — Frozen ledger input`, and any carried extraction hash from the supplied ledger must be recorded only in `Frozen source Doco body extraction hash`.
 14. **Mapping-equivalence hash controls workbook-level drift** — calculate `Mapping equivalence hash` over the stable mapping artefact sheets only, excluding `Validation Summary`, `Repeatability Audit`, workbook properties, timestamps, styles and other run-context metadata. Use this hash to distinguish true mapping drift from expected baseline-assessment metadata differences.
 
-If any v8.1 hardening control cannot be satisfied, produce the workbook with failed validation where permitted, or stop with the applicable hard failure message where the prompt requires a hard stop.
+If any hardening control cannot be satisfied, produce the workbook with failed validation where permitted, or stop with the applicable hard failure message where the prompt requires a hard stop.
 
 
 ### Instruction precedence and repetition control
@@ -719,6 +721,7 @@ For each canonical numbered section, create exactly one immutable `Section Eligi
 * implementation action present: `Yes` or `No`;
 * security outcome present: `Yes` or `No`;
 * explicit ISM reference present: `Yes` or `No`;
+* direct bracketed ISM reference present: `Yes` or `No`;
 * file-tree / code-layout only: `Yes` or `No`;
 * figure-caption only: `Yes` or `No`;
 * eligibility formula result: `Eligible`, `Excluded`, or `Fail`;
@@ -857,7 +860,9 @@ Also record:
 If duplicate visible section numbers are found, do not collapse them automatically. Resolve false duplicates by source order and heading-source type, prefer the true body heading over table/caption/list/code occurrences, and retain genuine restarted-numbering sections as distinct `Canonical Section Key` rows.
 
 
-During Phase 1, explicit ISM references may be recorded in the ledger for extraction and counting only. Do not use the catalog control statements, likely mappings, suggested-control likelihood, quality findings, optional-candidate discovery or candidate counts to create, merge, split or reclassify section rows.
+During Phase 1, explicit ISM references must be detected and recorded before eligibility classification where they populate `Explicit ISM Reference Present` and `Direct Bracketed ISM Reference Present`. This detection is for extraction, counting and the locked bracketed-reference eligibility formula only. Do not use the catalog control statements, likely mappings, suggested-control likelihood, quality findings, optional-candidate discovery or candidate counts to create, merge, split or reclassify section rows.
+
+Before applying the section 6 eligibility formula, inspect the assigned body text of each numbered section for valid normalisable `ISM-####` references inside square brackets. Set `Direct Bracketed ISM Reference Present = Yes` only where at least one valid normalisable explicit ISM reference appears between `[` and `]` in that section's assigned body text after comment, annotation, header, footer, table-of-contents and other excluded non-solution content has been removed. This detection must support a single bracketed reference such as `[ISM-1695]`; multiple references such as `[ISM-1695, ISM-1696]`; and bracketed references separated by commas, semicolons, slashes, spaces, line breaks or wrapped text. Apply the normalised ISM variants already allowed for valid references, including `ISM 1695`, `ISM - 1695`, `ism-1695`, en dash and em dash variants. Do not set this field for malformed references. Do not set this field from front matter, document control, table of contents, glossary, document map, approval pages, comments, annotations, headers, footers, table of contents entries or other excluded non-solution content.
 
 After every canonical numbered section has been recorded, treat the section inventory as a provisional ledger. Do not freeze the final `Section Eligibility Ledger` until section 6 eligibility classification and eligible-section Evidence Cluster ID assignment are complete.
 
@@ -907,7 +912,7 @@ Do not use parent-section content to make a child section eligible, except for m
 
 Do not use ISM catalog matching, suggested-control likelihood, availability of mapped controls, existing-control quality findings, optional candidates, rejected candidates or the presence of a likely catalog control to decide whether a section is eligible.
 
-A section with explicit ISM references but no substantive solution-design or implementation evidence is not automatically eligible. It is eligible only if the section also contains implementation-specific solution evidence or is a control-mapping, compliance-mapping or traceability row that contains direct implementation evidence for the referenced control.
+A section with explicit ISM references but no substantive solution-design or implementation evidence is not automatically eligible unless the assigned body text contains a valid direct bracketed ISM reference that satisfies the locked bracketed-reference override and no hard exclusion applies. Non-bracketed explicit ISM references remain eligible only if the section also contains implementation-specific solution evidence or is a control-mapping, compliance-mapping or traceability row that contains direct implementation evidence for the referenced control.
 
 A section may be eligible where it identifies a named technology, component, service, security tool, integration, data flow, access model, monitoring path, operational process or control responsibility and describes its role in the proposed or implemented solution. Do not require low-level configuration values where the section still provides enough implementation-specific evidence to identify what security function is being performed and where it applies.
 
@@ -966,19 +971,23 @@ For every `Section Eligibility Ledger` row, populate these locked boolean fields
 * `Implementation Action Present` = `Yes` only where the assigned body text states a concrete action, configuration, restriction, workflow, rule, integration, operating practice, monitoring activity, backup activity, patching activity, hardening activity or control responsibility.
 * `Security Outcome Present` = `Yes` only where the assigned body text states a security outcome, protection mechanism, monitoring behaviour, assurance requirement, access-control purpose, resilience outcome, integrity outcome, confidentiality outcome or risk-treatment purpose.
 * `Explicit ISM Reference Present` = `Yes` only where at least one valid explicit `ISM-####` reference is found in the section.
+* `Direct Bracketed ISM Reference Present` = `Yes` only where the assigned body text of the numbered section contains at least one valid normalisable `ISM-####` reference inside square brackets after comment, annotation, header, footer, table-of-contents and excluded non-solution content has been removed. This includes single bracketed references, multiple bracketed references, and bracketed references separated by commas, semicolons, slashes, spaces, line breaks or wrapped text. Do not set this field to `Yes` for malformed references.
 * `File-tree / Code-layout Only` = `Yes` where the assigned body text is only file paths, route paths, folder trees, Ansible tree layout, package names, module names, generated code structure, command listings or artefact lists without an enforceable security behaviour.
 * `Figure-caption Only` = `Yes` where the assigned body text is only a figure caption, diagram label, architecture label or table/figure cross-reference.
 * `Eligibility Formula Result` = the mechanical result below.
 
 Use this exact formula:
 
-`Eligibility Formula Result = Eligible` only when `Hard Exclusion Triggered = No` AND `Named Component Present = Yes` AND `Implementation Action Present = Yes` AND `Security Outcome Present = Yes`.
+`Eligibility Formula Result = Eligible` when either:
+
+1. `Hard Exclusion Triggered = No` AND `Named Component Present = Yes` AND `Implementation Action Present = Yes` AND `Security Outcome Present = Yes`; or
+2. `Hard Exclusion Triggered = No` AND `Direct Bracketed ISM Reference Present = Yes`.
 
 Otherwise set `Eligibility Formula Result = Excluded`.
 
 Set `Eligibility Classification = Eligible solution section` only when `Eligibility Formula Result = Eligible`. Set `Eligibility Classification = Excluded non-solution section` when `Eligibility Formula Result = Excluded`.
 
-The `Eligibility Reason` must cite the boolean fields that drove the result, not only a narrative judgement. Example: `Excluded — Hard Exclusion Triggered = Yes; File-tree / Code-layout Only = Yes` or `Eligible — component, implementation action and security outcome all present; no hard exclusion triggered`.
+The `Eligibility Reason` must cite the boolean fields that drove the result, not only a narrative judgement. Examples: `Excluded — Hard Exclusion Triggered = Yes; File-tree / Code-layout Only = Yes`; `Eligible — component, implementation action and security outcome all present; no hard exclusion triggered`; or `Eligible — Direct Bracketed ISM Reference Present = Yes; no hard exclusion triggered; normal evidence triad incomplete`.
 
 ### Deterministic eligibility decision matrix
 
@@ -998,7 +1007,7 @@ Apply the following eligibility decision matrix in this exact order. Stop at the
 
 7. Classify policy, register or record sections as `Eligible solution section` only where the section identifies the governed subject and required fields, approval/review obligation, retention obligation, monitoring obligation or enforcement mechanism. Otherwise classify as `Excluded non-solution section`.
 
-8. If a section contains explicit ISM references but fails the eligibility rules above, classify it as `Excluded non-solution section`; record the explicit references in the ledger for excluded-reference counting only.
+8. If a section contains explicit ISM references but does not satisfy the evidence-triad formula and does not satisfy the direct bracketed-reference override, classify it as `Excluded non-solution section`; record the explicit references in the ledger for excluded-reference counting only. A valid direct bracketed ISM reference may make the section eligible only where no earlier hard exclusion applies.
 
 9. If eligibility remains ambiguous after rules 1 to 8, classify as `Excluded non-solution section`.
 
@@ -1037,7 +1046,7 @@ Do not include the excluded section list in chat unless requested.
 
 ## 7. Explicit ISM references in `Doco`
 
-For each eligible numbered `Doco` section, identify explicit ISM controls referenced in non-comment content.
+Apply these deterministic explicit-reference extraction rules during Phase 1 before section 6 eligibility classification so `Explicit ISM Reference Present` and `Direct Bracketed ISM Reference Present` are available to the mechanical eligibility formula. For final mapping, include only explicit ISM controls that can be assigned to an eligible numbered `Doco` solution section.
 
 Use deterministic pattern matching only.
 
@@ -1058,6 +1067,8 @@ Normalise extracted valid references to `ISM-####` by treating the following as 
 * `ISM` followed by four digits;
 * non-breaking spaces between components;
 * lower-case or mixed-case variants such as `ism-1234`.
+
+For `Direct Bracketed ISM Reference Present`, detect valid references inside square brackets in the assigned body text before eligibility classification. The bracketed-reference detector must support `[ISM-1695]`, `[ISM-1695, ISM-1696]`, and bracketed references separated by commas, semicolons, slashes, spaces, line breaks or wrapped text. The detector must apply the normalisation rules above and must not treat malformed references as valid.
 
 Include references from non-comment content within eligible solution sections, including:
 
@@ -1302,6 +1313,22 @@ A `Suggested alternate control` is a quality-review finding for an existing expl
 
 For every `Existing control in doc` row, the `Candidate Assessment Ledger` must contain exactly one suggested-alternate review decision for the same `Ledger Row ID`, `Evidence Cluster ID` and `Existing Control`. That review decision must record `Basis Existing Register Row ID` and `Basis Existing Control` so the alternate is traceable to the exact explicit-control row being reviewed.
 
+The required suggested-alternate review decision must be a visible `Candidate Assessment Ledger` row with `Candidate Source Pass = Suggested-alternate better-fit check`. This row is required even when the existing control is fully supported and no alternate is accepted. Do not satisfy this requirement by leaving the alternate-review fields blank on unrelated candidate rows.
+
+For every required suggested-alternate review row, populate these fields:
+
+* `Basis Existing Register Row ID` = the exact `Register Row ID` of the `Existing control in doc` row being reviewed;
+* `Basis Existing Control` = the exact normalised existing `ISM-####` control being reviewed;
+* `Ledger Row ID` = the same `Ledger Row ID` as the existing-control row;
+* `Evidence Cluster ID` = the same `Evidence Cluster ID` as the existing-control row;
+* `Candidate Source Pass` = `Suggested-alternate better-fit check`;
+* `Alternate Discovery Method` = the deterministic same-evidence discovery method attempted, using the section 12B method names separated by `; ` in the order attempted;
+* `Alternate Candidates Considered` = the integer count of named same-evidence alternate candidates assessed, or `0` where the deterministic review found no same-evidence alternate candidate worth scoring;
+* `Best Rejected Alternate Control` = the highest-ranked rejected alternate candidate control ID, or blank only where `Alternate Candidates Considered = 0`; and
+* `Best Rejected Alternate Failure Reason` = one locked failure reason from section 12C.
+
+This audit row is a traceability requirement only. It must not promote an alternate unless section 12D is satisfied. It must not change the existing-control row, suppress the existing-control row, lower the existing-control finding, or create a suggested alternate merely for coverage.
+
 For every existing-control row with finding `No issue identified`, the required review decision is normally:
 
 `Rejected suggested-alternate review — no stronger same-evidence alternate identified`
@@ -1314,7 +1341,7 @@ For every existing-control row with finding `Minor relevance concern`, `Potentia
 
 Do not use the shorter rejection reason `No stronger same-evidence alternate identified` for weak existing controls unless the row also satisfies the candidate-discovery detail requirements in section 12C. For weak existing controls, a blank `Candidate ISM Control` is allowed only where `Alternate Candidates Considered = 0` and `Alternate Discovery Method` records the deterministic candidate-discovery method attempted.
 
-If the suggested-alternate review decision is missing for any eligible existing-control row, the Repeatability Audit must fail and `Intra-run validation checks passed` must be `No`.
+If the suggested-alternate review decision is missing for any eligible existing-control row, or if the review row exists but leaves `Basis Existing Register Row ID`, `Basis Existing Control`, `Alternate Discovery Method`, `Alternate Candidates Considered` or `Best Rejected Alternate Failure Reason` blank, the Repeatability Audit must fail and `Intra-run validation checks passed` must be `No`.
 
 ### 12B. Mandatory same-evidence alternate candidate discovery for weak existing controls
 
@@ -1849,7 +1876,7 @@ Use only these `Candidate Rejection Reason` values:
 * `Alternate candidate failed statement-level comparison`;
 * `Foreign subject introduced`.
 
-Use `Candidate Rejection Reason = Not applicable` only for accepted candidates. Use `Candidate Rejection Reason = No candidate generated from local evidence phrases or control intents` only for no-candidate support records. Use `Candidate Rejection Reason = No stronger same-evidence alternate identified` only for rejected suggested-alternate review rows where named alternate candidates were considered and none was stronger. Use `Candidate Rejection Reason = No same-evidence alternate candidate generated` only for weak existing-control suggested-alternate review rows where the same-evidence alternate discovery passes produced zero candidate controls. Use `Candidate Rejection Reason = Existing control remained strongest statement-level match` only where at least one named alternate candidate was scored but the existing control remained the strongest same-evidence statement-level match. Use `Candidate Rejection Reason = Alternate candidate failed statement-level comparison` only where a named alternate candidate was considered but failed Evidence Score `3` or the stronger-than-existing test.
+Use `Candidate Rejection Reason = Not applicable` only for accepted candidates. Use `Candidate Rejection Reason = No candidate generated from local evidence phrases or control intents` only for no-candidate support records. Use `Candidate Rejection Reason = No stronger same-evidence alternate identified` only for rejected suggested-alternate review rows where the existing-control finding is `No issue identified` and no alternate is accepted, or where named alternate candidates were considered and none was stronger. Use `Candidate Rejection Reason = No same-evidence alternate candidate generated` only for weak existing-control suggested-alternate review rows where the same-evidence alternate discovery passes produced zero candidate controls. Use `Candidate Rejection Reason = Existing control remained strongest statement-level match` only where at least one named alternate candidate was scored but the existing control remained the strongest same-evidence statement-level match. Use `Candidate Rejection Reason = Alternate candidate failed statement-level comparison` only where a named alternate candidate was considered but failed Evidence Score `3` or the stronger-than-existing test.
 
 Do not use free-text rejection reasons.
 
@@ -1864,15 +1891,16 @@ Use these exact field rules by row type.
 | Accepted suggested control | `Evidence phrase pass`, `Control-intent pass` or `Neighbouring candidate pass` | Suggested new `ISM-####` | `3` | `Accepted for ISM Action Register` | `Accepted` | `ISM Action Register` | `Not applicable` |
 | Accepted optional review candidate | `Evidence phrase pass`, `Control-intent pass`, `Neighbouring candidate pass` or `Suggested-alternate better-fit check` | Candidate `ISM-####` | `2` | `Accepted for Optional Review Candidates` | `Accepted` | `Optional Review Candidates` | `Not applicable` |
 | Rejected candidate | Any candidate-producing source pass | Candidate `ISM-####` where available | `3`, `2`, `1` or `0` | `Rejected` | `Rejected` | `Rejected` | One locked rejection reason other than `Not applicable` |
-| Rejected suggested-alternate review after named candidate assessment | `Suggested-alternate better-fit check` | Candidate `ISM-####` for assessed alternate candidates; review-summary row may be blank only where section 12C fields are complete | `3`, `2`, `1`, `0` or `Not applicable` for the review-summary row | `Rejected` | `Rejected` | `Rejected` | `No stronger same-evidence alternate identified`, `Existing control remained strongest statement-level match`, or `Alternate candidate failed statement-level comparison` |
+| Rejected suggested-alternate review — no stronger same-evidence alternate identified | `Suggested-alternate better-fit check` | Candidate `ISM-####` for assessed alternate candidates; review-summary row may be blank only where alternate-review audit fields are complete | `3`, `2`, `1`, `0` or `Not applicable` for the review-summary row | `Rejected` | `Rejected` | `Rejected` | `No stronger same-evidence alternate identified`, `Existing control remained strongest statement-level match`, or `Alternate candidate failed statement-level comparison` |
 | Rejected suggested-alternate review — no same-evidence alternate candidate generated | `Suggested-alternate better-fit check` | blank | `Not applicable` | `Rejected` | `Rejected` | `Rejected` | `No same-evidence alternate candidate generated` |
 | No-candidate support record | `No candidate generated from local evidence phrases or control intents` | blank | `Not applicable` | `No candidate generated from local evidence phrases or control intents` | `Not applicable` | `No ISM control identified support record` | `No candidate generated from local evidence phrases or control intents` |
 
 For suggested-alternate better-fit check rows:
 
-* `Alternate Discovery Method`, `Alternate Candidates Considered`, `Best Rejected Alternate Control` and `Best Rejected Alternate Failure Reason` must be populated for every weak existing-control review under section 12C.
+* `Basis Existing Register Row ID`, `Basis Existing Control`, `Alternate Discovery Method`, `Alternate Candidates Considered` and `Best Rejected Alternate Failure Reason` must be populated for every existing-control review row, including existing controls with `No issue identified`.
+* `Best Rejected Alternate Control` must be populated where `Alternate Candidates Considered` is greater than `0`; it may be blank only where `Alternate Candidates Considered = 0` or the row is an accepted suggested alternate.
 * For accepted suggested alternates, `Best Rejected Alternate Control` may be blank and `Best Rejected Alternate Failure Reason` = `Not applicable`.
-* For existing controls with `No issue identified`, these alternate-discovery fields may be `Not applicable` unless a named alternate was assessed.
+* For existing controls with `No issue identified`, do not leave the alternate-discovery fields blank or merely omit the review row. Use the rejected suggested-alternate review row type, `Candidate Source Pass = Suggested-alternate better-fit check`, `Evidence Score = Not applicable`, `Gate Result = Rejected`, `Accepted / Rejected = Rejected`, `Output Destination = Rejected`, and the applicable locked rejection/failure reason unless a named alternate was assessed.
 * `Optional Candidate Rank Before Cap` and `Optional Candidate Cap Disposition` are `Not applicable` for all suggested-alternate rows unless the row is accepted for Optional Review Candidates.
 
 For no-candidate support records:
@@ -2327,8 +2355,8 @@ Use these count definitions:
 * `Optional Review Candidates omitted by global cap` = `Optional Review Candidates before global cap - Optional Review Candidate rows`, with a minimum of `0`. Record `Not applicable — Optional review candidates off` when optional candidates are disabled or output mode is `Full coverage strict`.
 * `Candidate Assessment Ledger rows` = count of rows in the `Candidate Assessment Ledger` worksheet, excluding the header and excluding a `None found` placeholder row.
 * `Evidence Cluster Ledger rows` = count of rows in the `Evidence Cluster Ledger` worksheet, excluding the header and excluding a `None found` placeholder row.
-* `Ledger ID schema validation passed` = `Yes` only if every `Ledger Row ID`, `Evidence Cluster ID`, `Candidate Row ID`, `Register Row ID` and `Canonical Section Key` matches the locked v8 ID schema.
-* `Eligibility boolean formula enforced` = `Yes` only if every Section Eligibility Ledger row has the mandatory boolean fields populated and `Eligibility Classification` agrees with `Eligibility Formula Result`.
+* `Ledger ID schema validation passed` = `Yes` only if every `Ledger Row ID`, `Evidence Cluster ID`, `Candidate Row ID`, `Register Row ID` and `Canonical Section Key` matches the locked ID schema.
+* `Eligibility boolean formula enforced` = `Yes` only if every Section Eligibility Ledger row has the mandatory boolean fields populated, `Direct Bracketed ISM Reference Present` is populated, and `Eligibility Classification` agrees with `Eligibility Formula Result`, including rows made eligible by the direct bracketed-reference override.
 * `Candidate ledger non-empty in mapping mode` = `Yes` for `Full run` or `Mapping from supplied frozen ledger` only if `Eligible solution sections = 0` or `Candidate Assessment Ledger rows > 0`; `Not applicable — Section ledger only mode` for `Section ledger only`.
 * `Evidence Cluster IDs created before mapping` = `Yes` only if every eligible-section action-register row, optional-review row and candidate-assessment row references an Evidence Cluster ID from the frozen `Section Eligibility Ledger` before mapping began.
 * `No-control decisions supported by candidate ledger` = `Yes` only if every `No ISM control identified` row has at least one corresponding `Candidate Assessment Ledger` support record or rejected candidate row.
@@ -2337,7 +2365,7 @@ Use these count definitions:
 * `Evidence Score 2 suggested/alternate candidate entered action register` = `No` only if no `Suggested control` or `Suggested alternate control` row has Evidence Score `2`, `1` or `0`.
 * `Suggested-control section cap exceeded` = `No` only if no section has more than two `Suggested control` rows and no evidence cluster has more than one `Suggested control` row unless the rationale identifies separate obligations.
 * `Suggested-alternate section cap exceeded` = `No` only if no section has more than two `Suggested alternate control` rows and no evidence cluster has more than one `Suggested alternate control` row.
-* `Suggested-alternate review completeness passed` = `Yes` only if every `Existing control in doc` row has exactly one matching suggested-alternate review decision in the `Candidate Assessment Ledger`, and every weak existing-control row has either an accepted suggested alternate, one or more named alternate candidate rows, or a deterministic zero-candidate review row.
+* `Suggested-alternate review completeness passed` = `Yes` only if every `Existing control in doc` row has exactly one matching suggested-alternate review decision in the `Candidate Assessment Ledger` with `Candidate Source Pass = Suggested-alternate better-fit check`, the same `Ledger Row ID`, the same `Evidence Cluster ID`, non-blank `Basis Existing Register Row ID`, non-blank `Basis Existing Control`, non-blank `Alternate Discovery Method`, numeric `Alternate Candidates Considered`, and non-blank `Best Rejected Alternate Failure Reason`; and every weak existing-control row has either an accepted suggested alternate, one or more named alternate candidate rows, or a deterministic zero-candidate review row.
 * `Existing controls requiring alternate candidate search` = count of `Existing control in doc` rows with finding `Minor relevance concern`, `Potentially incorrect reference` or `Insufficient evidence`.
 * `Weak existing-control alternate reviews with named candidate assessed` = count of weak existing-control rows where at least one Candidate Assessment Ledger row for the same `Basis Existing Register Row ID` has `Candidate Source Pass = Suggested-alternate better-fit check` and a populated `Candidate ISM Control`.
 * `Weak existing-control alternate reviews with zero candidates generated` = count of weak existing-control rows where `Alternate Candidates Considered = 0`, `Candidate Rejection Reason = No same-evidence alternate candidate generated`, and section 12C audit fields are populated.
@@ -2359,9 +2387,9 @@ Use these count definitions:
 * `Cross-run ledger hash matched` = `Yes` only if the current section inventory, eligible-section inventory and evidence-cluster inventory hashes match the supplied frozen ledger or supplied mapping baseline workbook; `No` if they differ; `Not assessed — no frozen ledger or baseline supplied` if no comparable frozen ledger or baseline is supplied.
 * `Cross-run action decision hash matched` = `Yes` only if a mapping baseline workbook is supplied and the current candidate-pool and action-decision hashes match it; `No` if a mapping baseline workbook is supplied and either value differs; `Not assessed — no mapping baseline workbook supplied` if no mapping baseline workbook is supplied.
 * `Mapping equivalence hash matched` = `Yes` only if a mapping baseline workbook is supplied and the current `Mapping equivalence hash` matches it; `No` if a mapping baseline workbook is supplied and the value differs; `Not assessed — no mapping baseline workbook supplied` if no mapping baseline workbook is supplied.
-* `Intra-run validation checks passed` = `Yes` only if RAC-001 to RAC-037 pass, including all lettered sub-checks such as RAC-005A, RAC-012A, RAC-022A, RAC-022B, RAC-023A, RAC-033A, RAC-033B and RAC-033C.
+* `Intra-run validation checks passed` = `Yes` only if RAC-001 to RAC-037 pass, including all lettered sub-checks such as RAC-005A, RAC-012A, RAC-022A, RAC-022B, RAC-023A, RAC-033A, RAC-033B, RAC-033C and RAC-033D.
 * `Cross-run repeatability checks passed` = `Yes` only if a mapping baseline workbook is supplied and RAC-038 to RAC-045 pass; `No` if a mapping baseline workbook is supplied and any cross-run check fails; `Not assessed — no mapping baseline workbook supplied` if no mapping baseline workbook is supplied.
-* `Workbook schema validation passed` = `Yes` when Excel workbook output is produced and worksheet names, worksheet order and column headers exactly match section 23. If Excel output is unavailable and CSV-style fenced text is used, record `Not applicable — CSV fallback used`.
+* `Workbook schema validation passed` = `Yes` only when Excel workbook output is produced, worksheet names, worksheet order and column headers exactly match section 23, no structured Excel table objects are present, no `/xl/tables/table*.xml` parts are present, no worksheet contains `tableParts` references, no table-scoped AutoFilter XML exists, and any worksheet-level AutoFilter range exactly matches the final populated used range. If Excel output is unavailable and CSV-style fenced text is used, record `Not applicable — CSV fallback used`.
 * `Catalog metadata published normalised` = `Yes` only if `Catalog metadata published` is blank, `YYYY-MM-DD`, or ISO-8601 text and is not an Excel serial number, floating-point date or locale-formatted date.
 * `Validation wording stability passed` = `Yes` only if the validation summary uses exactly the locked result phrases in this section. In `Mapping from supplied frozen ledger` mode, use the exact phrases `Frozen ledger input only`, `Not applicable — Frozen ledger input`, `No`, `Not supplied in frozen ledger`, `Not assessed — no mapping baseline workbook supplied` and `Not assessed — no frozen ledger or baseline supplied` where those values apply. Do not use equivalent variations such as `from supplied frozen ledger`, `Frozen ledger input`, `Frozen ledger input only — no Doco re-extraction`, `Not applicable — Mapping from supplied frozen ledger`, `Not assessed — no separate baseline supplied`, or `Not applicable — no baseline supplied`.
 
@@ -2501,8 +2529,8 @@ Run these checks:
 | RAC-004 | Ledger freeze | `Section eligibility changed after ledger freeze = No`. |
 | RAC-005 | Evidence Cluster ID assignment | Eligible sections have deterministic Evidence Cluster IDs before mapping; excluded sections have `Evidence Cluster Inventory = Not applicable`. |
 | RAC-005A | Evidence Cluster Ledger schema | Evidence Cluster Ledger exists, is sorted deterministically, and every eligible Evidence Cluster ID in the Section Eligibility Ledger has exactly one matching row. |
-| RAC-005B | Ledger ID schema | Ledger Row IDs, Evidence Cluster IDs, Candidate Row IDs, Register Row IDs and Canonical Section Keys match the locked v8 schemas. |
-| RAC-005C | Eligibility boolean formula | Every Section Eligibility Ledger row has mandatory eligibility boolean fields populated and the final eligibility classification matches the formula. |
+| RAC-005B | Ledger ID schema | Ledger Row IDs, Evidence Cluster IDs, Candidate Row IDs, Register Row IDs and Canonical Section Keys match the locked schemas. |
+| RAC-005C | Eligibility boolean formula | Every Section Eligibility Ledger row has mandatory eligibility boolean fields populated and the final eligibility classification matches the formula, including the direct bracketed-reference override where `Direct Bracketed ISM Reference Present = Yes` and `Hard Exclusion Triggered = No`. |
 | RAC-006 | Mapping source locality | Every ISM Action Register row references evidence from the same frozen Section Eligibility Ledger row as its section number. |
 | RAC-007 | Excluded-section mapping | No ISM Action Register row is created for an `Excluded non-solution section`. |
 | RAC-008 | Explicit-control pair reconciliation | Existing-control rows equal the count of valid explicit eligible section-control pairs, including catalog-not-present explicit references. |
@@ -2540,6 +2568,7 @@ Run these checks:
 | RAC-033A | Weak existing-control alternate candidate coverage | Every existing-control row with `Minor relevance concern`, `Potentially incorrect reference` or `Insufficient evidence` has at least one named alternate candidate assessed or a deterministic zero-candidate review row. |
 | RAC-033B | Weak existing-control alternate audit detail | Every weak existing-control rejected alternate review populates `Alternate Discovery Method`, `Alternate Candidates Considered`, `Best Rejected Alternate Control` where candidates were considered, and `Best Rejected Alternate Failure Reason`. |
 | RAC-033C | No bare weak-control alternate rejection | No weak existing-control row uses only `No stronger same-evidence alternate identified` without the section 12C audit fields. |
+| RAC-033D | Existing-control alternate-review basis fields | Every existing-control row, including rows with `No issue identified`, has a matching `Suggested-alternate better-fit check` Candidate Assessment Ledger review row with non-blank `Basis Existing Register Row ID`, `Basis Existing Control`, `Alternate Discovery Method`, `Alternate Candidates Considered` and `Best Rejected Alternate Failure Reason`; `Best Rejected Alternate Control` is blank only when `Alternate Candidates Considered = 0` or an accepted alternate row makes it not applicable. |
 | RAC-034 | Structured evidence-score fields | Every assessed Candidate Assessment Ledger row has required action, subject/component, outcome/scope where required, missing element, assumption check and score justification populated consistently with the assigned Evidence Score. |
 | RAC-035 | Foreign-subject cap | No Evidence Score `3` candidate introduces a control subject, technology, account type, system, data type, process, role or obligation absent from the Evidence Cluster text and adjacent local wording in the same frozen ledger row. |
 | RAC-036 | Optional-candidate source control | Every Optional Review Candidate row is copied from an accepted Candidate Assessment Ledger row with Evidence Score `2` and `Output Destination = Optional Review Candidates`; no separate optional-candidate discovery pass was used. |
@@ -2553,7 +2582,7 @@ Run these checks:
 | RAC-044 | Full-run repeatability claim control | A fresh `Full run` without a supplied mapping baseline workbook must not claim cross-run repeatability; it may only report intra-run validation. |
 | RAC-045 | Mapping-equivalence baseline hash | If a mapping baseline workbook is supplied for mapping comparison, current `Mapping equivalence hash` matches the supplied baseline. If no mapping baseline workbook is supplied or mode is `Section ledger only`, record `Not assessed — no mapping baseline workbook supplied`. |
 
-Set `Intra-run validation checks passed` to `Yes` only if RAC-001 to RAC-037 pass, including all lettered sub-checks such as RAC-005A, RAC-012A, RAC-022A, RAC-022B, RAC-023A, RAC-033A, RAC-033B and RAC-033C. Set `Cross-run repeatability checks passed` to `Yes` only if a mapping baseline workbook is supplied and RAC-038 to RAC-045 pass. If no mapping baseline workbook is supplied, set `Cross-run repeatability checks passed = Not assessed — no mapping baseline workbook supplied`. If any required check fails, set the applicable validation field to `No`, keep the workbook output where permitted, set the failed check row to `Fail`, and record the failure detail.
+Set `Intra-run validation checks passed` to `Yes` only if RAC-001 to RAC-037 pass, including all lettered sub-checks such as RAC-005A, RAC-012A, RAC-022A, RAC-022B, RAC-023A, RAC-033A, RAC-033B, RAC-033C and RAC-033D. Set `Cross-run repeatability checks passed` to `Yes` only if a mapping baseline workbook is supplied and RAC-038 to RAC-045 pass. If no mapping baseline workbook is supplied, set `Cross-run repeatability checks passed = Not assessed — no mapping baseline workbook supplied`. If any required check fails, set the applicable validation field to `No`, keep the workbook output where permitted, set the failed check row to `Fail`, and record the failure detail.
 
 ---
 
@@ -2858,18 +2887,19 @@ Use these exact `Section Eligibility Ledger` columns in this exact order:
 22. `Implementation Action Present`;
 23. `Security Outcome Present`;
 24. `Explicit ISM Reference Present`;
-25. `File-tree / Code-layout Only`;
-26. `Figure-caption Only`;
-27. `Eligibility Formula Result`;
-28. `Parent / Container Only`;
-29. `Concise Security-Relevant Intent`;
-30. `Key Evidence Phrases`;
-31. `Evidence Cluster Inventory`;
-32. `Explicit ISM References Found`;
-33. `Malformed / Typo-like ISM References Found`;
-34. `Section Type Assessment`;
-35. `Eligibility Classification`;
-36. `Eligibility Reason`.
+25. `Direct Bracketed ISM Reference Present`;
+26. `File-tree / Code-layout Only`;
+27. `Figure-caption Only`;
+28. `Eligibility Formula Result`;
+29. `Parent / Container Only`;
+30. `Concise Security-Relevant Intent`;
+31. `Key Evidence Phrases`;
+32. `Evidence Cluster Inventory`;
+33. `Explicit ISM References Found`;
+34. `Malformed / Typo-like ISM References Found`;
+35. `Section Type Assessment`;
+36. `Eligibility Classification`;
+37. `Eligibility Reason`.
 
 Use these exact `Evidence Cluster Ledger` columns in this exact order:
 
@@ -2956,26 +2986,74 @@ Use these exact `Repeatability Audit` columns in this exact order:
 
 The `Section Eligibility Ledger` worksheet is the frozen handoff from the separate section-extraction pass to the mapping pass. It is for auditability, repeatability and count reconciliation only. It is not part of the ISM Action Register and must not be used to add control mappings outside the action-register rules.
 
-Format the `ISM Action Register` worksheet as a structured Excel table with:
+### Excel OpenXML hardening and table-safety rules
 
-* Columns in the exact same order as specified above.
-* A dark blue header row with bold white text.
-* Alternating white and light-blue banded rows for readability.
-* Filter dropdowns enabled on every column.
-* Frozen header row.
-* Wrapped text in all long-text columns.
-* Vertical top alignment for all cells.
-* Thin light borders around table cells.
-* Auto-fit column widths, with long-text columns capped at a readable width.
-* The worksheet tab named `ISM Action Register`.
+Do not create structured Excel Table objects, ListObjects, table parts, or table AutoFilter XML in any worksheet.
+
+Specifically:
+
+* Do not create `/xl/tables/table*.xml` parts.
+* Do not create worksheet `tableParts` relationships.
+* Do not use Excel structured table objects for any worksheet.
+* Do not use table-scoped AutoFilter ranges.
+* Do not rely on structured tables for filtering, styling, banding, validation, or readability.
+
+All workbook worksheets must be plain worksheet ranges with styled cells only.
+
+For every worksheet:
+
+1. Write all header cells and data rows first.
+2. Do not create formatting ranges until all worksheet rows have been written.
+3. Determine the final populated used range from `A1` to the last populated row and last populated column.
+4. Apply header styling to row 1 only.
+5. Apply borders, fills, alignment, wrapping and column widths directly to cells in the final populated used range.
+6. Freeze the header row using worksheet freeze panes only.
+7. Do not merge cells inside any tabular worksheet range.
+8. Ensure there are no blank column headers.
+9. Ensure there are no duplicate column headers within the same worksheet.
+10. If a listed worksheet has no substantive data rows, keep the worksheet, include the locked header row, and include one placeholder data row with `None found` in the first data cell where appropriate.
+11. If filter dropdowns are required, apply only worksheet-level AutoFilter to the final populated used range after all rows have been written.
+12. If worksheet-level AutoFilter cannot be applied safely to the exact final populated used range, omit filters rather than creating an invalid workbook.
+13. Never create an AutoFilter range that is smaller than the populated worksheet range.
+14. Never create an AutoFilter range before all worksheet rows have been written.
+15. Never create an AutoFilter range on a partially populated table, placeholder-only header range, or stale range.
+
+Use this formatting approach instead of structured Excel tables:
+
+* dark blue header row with bold white text;
+* alternating white and light-blue row fills where practical, applied as direct cell formatting only;
+* frozen header row;
+* wrapped text in all long-text columns;
+* vertical top alignment for all cells;
+* thin light borders around populated cells;
+* auto-fit column widths, with long-text columns capped at a readable width;
+* worksheet tabs named exactly as specified in the locked workbook schema.
 
 The Excel output columns must not be reordered alphabetically, grouped by category, grouped by control type, optimised for width, or changed from the locked column order.
 
-Format the `Validation Summary`, `Reader Guide`, `Section Eligibility Ledger`, `Evidence Cluster Ledger`, `Candidate Assessment Ledger`, `Optional Review Candidates`, `Malformed References` and `Repeatability Audit` worksheets with the same professional blue-and-white style where practical.
+Format the `Validation Summary`, `Reader Guide`, `Section Eligibility Ledger`, `Evidence Cluster Ledger`, `Candidate Assessment Ledger`, `Optional Review Candidates`, `Malformed References` and `Repeatability Audit` worksheets with the same professional blue-and-white style where practical, using direct cell formatting only.
 
-Do not use random colours. Use a consistent professional blue-and-white table style.
+Do not use random colours. Use a consistent professional blue-and-white worksheet style.
 
-Before finalising the workbook, validate that worksheet names, worksheet order and column headers exactly match this schema. Record `Workbook schema validation passed = Yes` in `Validation Summary` and `Repeatability Audit` only when Excel output is produced and the schema matches. If Excel output is unavailable and CSV fallback is used, record `Workbook schema validation passed = Not applicable — CSV fallback used`.
+Before finalising the workbook, perform an Excel OpenXML safety validation:
+
+* worksheet names match the locked schema exactly;
+* worksheet order matches the locked schema exactly;
+* worksheet column headers match the locked schema exactly;
+* every worksheet has a final used range from `A1` to its last populated row and last populated column;
+* no populated rows exist outside the final used range;
+* no structured Excel table objects exist;
+* no `/xl/tables/table*.xml` parts exist;
+* no worksheet contains `tableParts` references;
+* no table-scoped AutoFilter XML exists;
+* any worksheet-level AutoFilter range, if present, exactly matches the final populated used range;
+* no worksheet-level AutoFilter range is stale, header-only, or smaller than the populated data range.
+
+Record `Workbook schema validation passed = Yes` in `Validation Summary` and `Repeatability Audit` only when Excel output is produced and all schema and Excel OpenXML safety checks pass. If Excel output is unavailable and CSV fallback is used, record `Workbook schema validation passed = Not applicable — CSV fallback used`.
+
+If any Excel OpenXML safety validation check fails, do not save the workbook as a successful output. Correct the workbook structure before saving. If correction is not possible, stop and state:
+
+`Excel workbook generation failed validation before save because the workbook would contain invalid table or AutoFilter XML.`
 
 If the execution environment can create files, create the Excel workbook. Do not choose Markdown merely because it is easier to display in chat.
 
@@ -3029,7 +3107,7 @@ When continuing an incomplete output, continue from the next incomplete row afte
 
 ## 25. Critical final self-check
 
-Before producing the final answer, first verify these v8 hardening checks:
+Before producing the final answer, first verify these hardening checks:
 
 * no ledger row uses a non-`SEL-` prefix;
 * no evidence cluster uses a non-`EC-SEL-` prefix;
@@ -3065,5 +3143,11 @@ Then verify only these critical checks:
 19. Optional Review Candidates, if produced, remained outside the ISM Action Register, had Evidence Score `2`, were accepted into Optional Review Candidates rather than treated as rejected action-register rows, and used only the locked `Gate Not Met` vocabulary.
 20. Every `No ISM control identified` row is supported by a Candidate Assessment Ledger support record or rejected candidate row.
 21. Workbook or CSV output used the locked schema, validation summary labels, deterministic sorting rules and Repeatability Audit checks.
+22. If Excel workbook output was produced, no structured Excel Table objects, ListObjects or table parts were created.
+23. If Excel workbook output was produced, no `/xl/tables/table*.xml` parts exist in the workbook.
+24. If Excel workbook output was produced, no worksheet contains `tableParts` references.
+25. If Excel workbook output was produced, no table-scoped AutoFilter XML exists.
+26. If Excel workbook output was produced, any worksheet-level AutoFilter range exactly matches the final populated used range.
+27. If Excel workbook output was produced, no worksheet has populated rows or columns outside its validated used range.
 
 Do not output this self-check unless requested.
