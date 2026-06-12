@@ -163,9 +163,11 @@ Used when the document references or appears to contain one control, but the evi
 
 ---
 
-### 🟡 Optional Review Candidate
+### 🟡 Optional Control Candidate (For Manual Review)
 
-Used where there is plausible evidence, but not enough confidence for a firm recommendation.
+Optional Review Candidates allow plausible but uncertain matches to be surfaced without overstating them as firm recommendations.
+
+This is useful when the evidence suggests a possible ISM relationship, but the confidence level is not high enough for a suggested control.
 
 > **Possible match requiring human review = Optional Review Candidate**
 
@@ -191,58 +193,22 @@ This prevents weak or uncertain evidence from being presented as a firm recommen
 Controls the source of truth for ISM controls.
 
 * Uploaded `ISM_catalog.json` improves repeatability.
-* Online ASD OSCAL catalog sources can improve currency.
-* The same catalog should be used for both ledger creation and mapping when repeatability is required.
+* Online ASD OSCAL catalog (YAML) sources.
 
 ---
 
-### 🎚️ Control Output Volume
+### 🎚️ Control Output Limits
 
-Controls how many mappings are produced.
+Caps can be applied per section or evidence cluster.
 
-* Lower volume produces fewer, stronger matches.
+* Lower volume settings apply stricter selection pressure for fewer, stronger matches.
 * Higher volume produces broader coverage, but increases review effort.
-* Caps can be applied per section or evidence cluster.
+* Enable/Disable Optional Control Candidates  
 
----
-
-### 🟡 Optional Review Candidates
-
-Optional Review Candidates allow plausible but uncertain matches to be surfaced without overstating them as firm recommendations.
-
-This is useful when the evidence suggests a possible ISM relationship, but the confidence level is not high enough for a suggested control.
-
----
-
-## ⚖️ Main Trade-Off
+### ⚖️ Output Limit Trade-Off
 
 > **Stricter settings improve precision and repeatability.**
 > **Looser settings improve coverage, but create more optional review items.**
 
-For assurance-focused reviews, stricter settings are usually preferred.
-
-For discovery-focused reviews, looser settings may be useful, provided optional candidates are clearly separated from firm recommendations.
-
 ---
 
-## 🧠 Design Summary
-
-| Design choice                                        | Benefit                                                 |
-| ---------------------------------------------------- | ------------------------------------------------------- |
-| Freeze evidence before mapping                       | Reduces drift and improves repeatability                |
-| Use stable `SEL-*` and `EC-*` IDs                    | Improves traceability and reviewability                 |
-| Separate evidence discovery from control mapping     | Prevents the evidence base from changing during mapping |
-| Separate suggested controls from optional candidates | Avoids overstating weak or uncertain matches            |
-| Use a selected ISM catalog as the source of truth    | Keeps mappings tied to a known catalog version          |
-
----
-
-## ✅ Recommended Use
-
-Use this workflow when you need ISM mapping that is:
-
-* repeatable;
-* explainable;
-* evidence-backed;
-* reviewable;
-* suitable for assurance, compliance, or security design traceability.
