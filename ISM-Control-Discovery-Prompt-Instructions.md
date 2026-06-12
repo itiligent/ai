@@ -194,24 +194,25 @@ Compare stable mapping artefacts against `Run2-Mapping-Baseline.xlsx`.
 
 Create the Excel workbook output and save it as:
 
-`Run3-ISM-Mapping-Repeat-Test.xlsx`
+`Run3-ISM-Mapping-Test.xlsx`
 ```
 
 ## Run 4 (Optional)
 
+Start a new chat.
 
 Attach only:
 
 ```text
-The ISM-Control-Discovery-Prompt.txt
+The ISM-Control-Discovery-Prompt
 Run2-ISM-Mapping-Output.xlsx
-Run3-ISM-Mapping-Repeat-Test.xlsx
+Run3-ISM-Mapping-Test.xlsx
 ```
 
 Use this message:
 
 ```text
-You are reviewing repeatability and drift between two ISM mapping workbooks produced from the same frozen Section Eligibility Ledger using `ISM-Control-Discovery-Prompt.txt`.
+You are reviewing repeatability and drift between two ISM mapping workbooks produced from the same frozen Section Eligibility Ledger using `ISM-Control-Discovery-Prompt`.
 
 Inputs supplied in this run:
 
@@ -335,7 +336,7 @@ Provide:
 
 6. Final statement:
 
-   * whether Run 3 can be accepted as repeatable against Run 2;
+   * whether Run3 can be accepted as repeatable against Run2;
    * whether further prompt changes are required
 
 ```
