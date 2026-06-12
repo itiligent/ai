@@ -3,7 +3,7 @@ Read the [readme first](https://github.com/itiligent/ISM-Mapper/blob/main/Readme
 
 Download [ISM-Mapper-Prompt.txt](https://raw.githubusercontent.com/itiligent/ai/refs/heads/main/ISM-Control-Discovery-Prompt.txt) 
 
-Download [ISM_catalog.json from your preffered ISM release:](https://github.com/AustralianCyberSecurityCentre/ism-oscal/releases)
+Download [ISM_catalog.json:](https://github.com/AustralianCyberSecurityCentre/ism-oscal/releases) from your preffered ISM release
 
 
 
