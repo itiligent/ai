@@ -161,9 +161,7 @@ Attach only:
 Use this message:
 
 ```text
-Run ISM-Control-Discovery-Prompt.txt as a prompt.
-
-This is Run 3 of the repeatability test.
+Run ISM-Control-Discovery-Prompt as a prompt.
 
 Set:
 Operating mode = `Mapping from supplied frozen ledger`
@@ -176,14 +174,14 @@ Do not re-extract Doco. Do not rebuild the section ledger. Do not create new Evi
 
 Save the workbook as:
 
-`Run3_ISM_Mapping_Check.xlsx`
+`Run3_ISM_Mapping_Output.xlsx`
 
 ```
 
 Download the output and rename it:
 
 ```text
-Run3_ISM_Mapping_Check.xlsx
+Run3_ISM_Mapping_Output.xlsx
 ```
 
 ## How to judge pass/fail
@@ -195,7 +193,7 @@ Attach only:
 ```text
 1. The ISM-Control-Discovery-Prompt.txt
 2. Run2_Mapping_Baseline.xlsx
-3. Run3_ISM_Mapping_Check.xlsx
+3. Run3_ISM_Mapping_Output.xlsx
 ```
 
 Use this message:
@@ -206,10 +204,10 @@ You are reviewing repeatability and drift between two ISM mapping workbooks prod
 Inputs supplied in this run:
 
 1. Baseline mapping workbook:
-   `Run2_v8_Mapping_Baseline.xlsx`
+   `Run2_Mapping_Baseline.xlsx`
 
 2. Repeat mapping workbook:
-   `Run3_v8_Mapping_Test.xlsx`
+   `Run3_ISM_Mapping_Output.xlsx`
 
 Task:
 
