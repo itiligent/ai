@@ -5,22 +5,14 @@ Download [Promptname.txt](https://raw.githubusercontent.com/itiligent/ai/refs/he
 
 Download [your preffered ISM version (in JSON format):](https://github.com/AustralianCyberSecurityCentre/ism-oscal/releases)
 
-For controlled and repeatable mapping, the prompt files's `Operating mode` is set differenty for each step:
 
-```text
-Step 1: Operating mode = `Section ledger only`
-
-Step 2: Operating mode = `Mapping from supplied frozen ledger`
-
-(A 3rd `Full run` ad-hoc operating mode exists, see bottom.)
-```
 
 ---
 
 
 ## Step 1: Create A Frozen Document Ledger
 
-Edit the downloaded prompt file setting:
+Edit the prompt files's `Operating mode` setting value to:
 
 ```text
 Operating mode = `Section ledger only`
@@ -76,7 +68,7 @@ Run1-Frozen-Section-Ledger.xlsx
 
 ## Step 2: Map ISM Controls From The Frozen Document Ledger
 
-Before running the prompt, in `ISM-Control-Discovery-Prompt.txt` set:
+Edit the prompt files's `Operating mode` setting value to:
 
 ```text
 Operating mode = `Mapping from supplied frozen ledger`
@@ -87,7 +79,7 @@ Start a new chat.
 Attach only:
 
 ```text
-1.  Promptname.txt
+1. Promptname.txt
 2. The same ASD OSCAL ISM catalog JSON/YAML used in Step 1
 3. Run1-Frozen-Section-Ledger.xlsx
 * Do not attach the original Doco *
