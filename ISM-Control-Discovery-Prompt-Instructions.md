@@ -14,7 +14,7 @@ Step 2: Operating mode = `Mapping from supplied frozen ledger`
 
 ---
 
-## Why A 2 Step Approach Is Needed
+## Why A Two Step Approach Is Needed
 
 ISM control mapping can vary significantly if the LLM is allowed to re-extract and reinterpret the document while it works. This can cause sections, evidence and control relevance to shift during a single mapping run, reducing consistency.
 
