@@ -1,17 +1,36 @@
-## Repeatability Testing
+## 🔁 Repeatability Testing
 
-Repeatability testing checks that the same frozen evidence, ISM catalog, prompt version, and settings produce the same, or materially consistent, mapping result.
+Repeatability testing confirms that the same frozen evidence base produces the same, or materially consistent, ISM mapping result when the same inputs are used.
 
-This is needed so control recommendations are stable, explainable, and auditable.
+This test is designed to confirm that mapping outcomes are stable, explainable, and auditable.
 
-If results change between runs, repeatability testing helps show whether the difference was caused by a changed ledger, updated catalog, prompt change, setting change, or mapping drift.
+A repeatable run should use the same:
 
+| Input                                | Purpose                                       |
+| ------------------------------------ | --------------------------------------------- |
+| 🧊 Frozen Section Eligibility Ledger | Fixed section evidence base                   |
+| 🧩 Evidence Cluster Ledger           | Fixed evidence clusters and stable `EC-*` IDs |
+| 📚 ASD OSCAL ISM catalog             | Same control catalog and control metadata     |
+| ⚙️ Prompt version                    | Same mapping rules and scoring logic          |
+| 🎚️ Prompt settings                  | Same caps, thresholds, and output settings    |
 
-## Run 3
+If results change between runs, repeatability testing helps identify whether the change was caused by:
 
-Start a new chat.
+* a changed frozen ledger;
+* an updated ISM catalog;
+* a prompt change;
+* a settings change;
+* nondeterministic mapping drift.
 
-Attach only:
+---
+
+## 🧪 Run 3 — Repeat Mapping from the Frozen Ledger
+
+Run 3 repeats the mapping pass using the same frozen evidence base used in Run 2.
+
+The original source document must **not** be supplied or re-read.
+
+### Attach only
 
 ```text
 1. Promptname.txt
@@ -20,7 +39,9 @@ Attach only:
 4. Run2-ISM-Mapping-Output.xlsx
 ```
 
-```
+### Prompt message
+
+```text
 Run Promptname.txt as a prompt.
 
 Set:
@@ -47,26 +68,30 @@ Copy the `Section Eligibility Ledger` and `Evidence Cluster Ledger` worksheets f
 
 Perform the mapping pass only from the supplied frozen ledger and selected catalog.
 
-Compare stable mapping artefacts against `Run2-Mapping-Baseline.xlsx`.
+Compare stable mapping artefacts against `Run2-ISM-Mapping-Output.xlsx`.
 
 Create the Excel workbook output and save it as:
 
 `Run3-ISM-Mapping-Test.xlsx`
 ```
 
-## Run 4
+---
 
-Start a new chat.
+## 🔍 Run 4 — Compare Run 2 and Run 3 for Drift
 
-Attach only:
+Run 4 compares the baseline mapping workbook against the repeat mapping workbook.
+
+This run does **not** perform ISM mapping. It only checks whether Run 3 reproduced Run 2 without meaningful drift.
+
+### Attach only
 
 ```text
-Promptname.txt
-Run2-ISM-Mapping-Output.xlsx
-Run3-ISM-Mapping-Test.xlsx
+1. Promptname.txt
+2. Run2-ISM-Mapping-Output.xlsx
+3. Run3-ISM-Mapping-Test.xlsx
 ```
 
-Use this message:
+### Prompt message
 
 ```text
 You are reviewing repeatability and drift between two ISM mapping workbooks produced from the same frozen Section Eligibility Ledger using `ISM-Control-Discovery-Prompt`.
@@ -92,86 +117,88 @@ Comparison method:
 
 1. Inspect workbook structure:
 
-   * confirm both workbooks contain the same relevant worksheets;
-   * identify missing, extra or renamed worksheets.
+   - confirm both workbooks contain the same relevant worksheets;
+   - identify missing, extra or renamed worksheets.
 
 2. Compare these worksheets row-by-row and column-by-column:
 
-   * `Section Eligibility Ledger`
-   * `Evidence Cluster Ledger`
-   * `Candidate Assessment Ledger`
-   * `ISM Action Register`
-   * `Optional Review Candidates`
-   * `Malformed References`
-   * `Validation Summary`
-   * `Repeatability Audit`
-   * `Reader Guide`, if present
+   - `Section Eligibility Ledger`
+   - `Evidence Cluster Ledger`
+   - `Candidate Assessment Ledger`
+   - `ISM Action Register`
+   - `Optional Review Candidates`
+   - `Malformed References`
+   - `Validation Summary`
+   - `Repeatability Audit`
+   - `Reader Guide`, if present
 
 3. Treat these as critical repeatability artefacts:
 
-   * Section inventory hash
-   * Eligible section inventory hash
-   * Evidence cluster inventory hash
-   * Candidate pool hash
-   * Action decision hash
-   * Candidate Assessment Ledger row count
-   * ISM Action Register row count
-   * Existing control row count
-   * Suggested control row count
-   * Suggested alternate control row count
-   * No ISM control identified row count
-   * Optional Review Candidate row count
-   * Optional candidates before cap
-   * Optional candidates omitted due to cap
-   * Weak existing-control alternate coverage result
-   * Cross-run ledger hash matched
-   * Cross-run action decision hash matched
-   * Cross-run repeatability checks passed
+   - Section inventory hash
+   - Eligible section inventory hash
+   - Evidence cluster inventory hash
+   - Candidate pool hash
+   - Action decision hash
+   - Candidate Assessment Ledger row count
+   - ISM Action Register row count
+   - Existing control row count
+   - Suggested control row count
+   - Suggested alternate control row count
+   - No ISM control identified row count
+   - Optional Review Candidate row count
+   - Optional candidates before cap
+   - Optional candidates omitted due to cap
+   - Weak existing-control alternate coverage result
+   - Cross-run ledger hash matched
+   - Cross-run action decision hash matched
+   - Cross-run repeatability checks passed
 
-4. Classify differences as:
+4. Classify differences as one of:
 
-   * `Expected baseline metadata difference`
-   * `Formatting-only difference`
-   * `Validation wording / metadata drift`
-   * `Ledger drift`
-   * `Evidence cluster drift`
-   * `Candidate pool drift`
-   * `Action decision drift`
-   * `Optional candidate drift`
-   * `Suggested alternate-control audit drift`
-   * `Critical repeatability failure`
+   - `Expected baseline metadata difference`
+   - `Formatting-only difference`
+   - `Validation wording / metadata drift`
+   - `Ledger drift`
+   - `Evidence cluster drift`
+   - `Candidate pool drift`
+   - `Action decision drift`
+   - `Optional candidate drift`
+   - `Suggested alternate-control audit drift`
+   - `Critical repeatability failure`
 
-5. For any difference, report:
+5. For each difference, report:
 
-   * workbook sheet;
-   * row identifier or row number;
-   * column name;
-   * Run 2 value;
-   * Run 3 value;
-   * classification;
-   * likely cause;
-   * whether it affects repeatability;
-   * recommended prompt or process fix.
+   - workbook sheet;
+   - row identifier or row number;
+   - column name;
+   - Run 2 value;
+   - Run 3 value;
+   - classification;
+   - likely cause;
+   - whether it affects repeatability;
+   - recommended prompt or process fix.
 
-6. Pay special attention to v8-specific alternate-control audit fields. For every weak existing control, check whether the Candidate Assessment Ledger consistently records:
+6. Pay special attention to alternate-control audit fields.
 
-   * alternate candidate discovery method;
-   * alternate candidates considered count;
-   * best rejected alternate control ID, where applicable;
-   * best rejected alternate failure reason;
-   * whether a suggested alternate was promoted or defensibly rejected.
+   For every weak existing control, check whether the Candidate Assessment Ledger consistently records:
+
+   - alternate candidate discovery method;
+   - alternate candidates considered count;
+   - best rejected alternate control ID, where applicable;
+   - best rejected alternate failure reason;
+   - whether a suggested alternate was promoted or defensibly rejected.
 
 7. Check whether suggested alternate controls are repeatable:
 
-   * if Run 2 and Run 3 both produce zero suggested alternates, confirm whether the rejection audit is identical and sufficient;
-   * if suggested alternates appear, confirm the same controls, same sections, same Evidence Cluster IDs, same existing-control linkages and same actions appear in both runs.
+   - if Run 2 and Run 3 both produce zero suggested alternates, confirm whether the rejection audit is identical and sufficient;
+   - if suggested alternates appear, confirm the same controls, same sections, same Evidence Cluster IDs, same existing-control linkages and same actions appear in both runs.
 
 8. Check optional candidate cap behaviour:
 
-   * compare Optional Review Candidate rows;
-   * compare optional candidates before cap;
-   * compare optional candidates omitted due to cap;
-   * confirm cap ordering is deterministic.
+   - compare Optional Review Candidate rows;
+   - compare optional candidates before cap;
+   - compare optional candidates omitted due to cap;
+   - confirm cap ordering is deterministic.
 
 Output format:
 
@@ -179,9 +206,9 @@ Provide:
 
 1. Executive verdict:
 
-   * `Repeatability passed`
-   * `Repeatability passed with metadata-only differences`
-   * `Repeatability failed`
+   - `Repeatability passed`
+   - `Repeatability passed with metadata-only differences`
+   - `Repeatability failed`
 
 2. Summary comparison table with key counts and hashes from both runs.
 
@@ -191,9 +218,48 @@ Provide:
 
 5. Specific recommendations to improve `ISM-Control-Discovery-Prompt`, if needed.
 
-6. Final statement:
+6. Final statement confirming:
 
-   * whether Run3 can be accepted as repeatable against Run2;
-   * whether further prompt changes are required
-
+   - whether Run 3 can be accepted as repeatable against Run 2;
+   - whether further prompt changes are required.
 ```
+
+---
+
+## ✅ Expected Outcome
+
+A successful repeatability test should show that Run 3 reproduced Run 2 using the same frozen evidence base.
+
+Acceptable differences are usually limited to:
+
+| Difference type                     | Acceptable? | Notes                                 |
+| ----------------------------------- | ----------: | ------------------------------------- |
+| Formatting-only changes             |       ✅ Yes | Styling, widths, colours, wrapping    |
+| Workbook creation timestamp         |       ✅ Yes | Expected metadata difference          |
+| Run label or output filename        |       ✅ Yes | Expected baseline metadata difference |
+| Validation wording changes          |   ⚠️ Review | Accept only if meaning is unchanged   |
+| Ledger row changes                  |        ❌ No | Indicates frozen evidence drift       |
+| Evidence Cluster ID changes         |        ❌ No | Breaks traceability                   |
+| Candidate score changes             |        ❌ No | Indicates mapping drift               |
+| Action decision changes             |        ❌ No | Indicates repeatability failure       |
+| Optional candidate ordering changes |   ⚠️ Review | May indicate nondeterministic ranking |
+
+---
+
+## 🧭 Repeatability Verdict Guide
+
+Use the following guide when interpreting the Run 4 result:
+
+| Verdict                                                  | Meaning                                                                                                        |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| ✅ `Repeatability passed`                                 | No meaningful differences were found                                                                           |
+| 🟡 `Repeatability passed with metadata-only differences` | Only expected metadata, filename, timestamp, or formatting differences were found                              |
+| 🔴 `Repeatability failed`                                | Ledger, evidence cluster, candidate, action decision, optional candidate, or alternate-control drift was found |
+
+---
+
+## 🧊 Important Rule
+
+Repeatability testing is only valid if the original Doco is **not** supplied in Runs 3 or 4.
+
+The purpose of the test is to prove that mapping is driven by the frozen evidence base, not by re-reading or reinterpreting the source document.
