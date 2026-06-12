@@ -65,7 +65,7 @@ Operating mode = Section ledger only
 
 Create the Excel workbook output and save it as:
 
-Run1_Frozen_Section_Ledger.xlsx
+Run1-Frozen-Section-Ledger.xlsx
 
 Stop after creating and freezing the Section Eligibility Ledger and Evidence Cluster Ledger.
 
@@ -85,7 +85,7 @@ The output workbook must contain the frozen Section Eligibility Ledger and Evide
 Download the output and save it as:
 
 ```text
-Run1_Frozen_Section_Ledger.xlsx
+Run1-Frozen-Section-Ledger.xlsx
 ```
 
 ---
@@ -105,7 +105,7 @@ Attach only:
 ```text
 1. ISM-Control-Discovery-Prompt.txt
 2. The same ASD OSCAL ISM catalog JSON/YAML used in Step 1
-3. Run1_Frozen_Section_Ledger.xlsx
+3. Run1-Frozen-Section-Ledger.xlsx
 * Do not attach the original Doco *
 ```
 
@@ -119,7 +119,7 @@ Operating mode = `Mapping from supplied frozen ledger`
 
 Use the attached ISM_catalog.json as the authoritative ASD OSCAL ISM catalog.
 
-Use Run1_Frozen_Section_Ledger.xlsx as the authoritative frozen Section Eligibility Ledger and Evidence Cluster Ledger.
+Use Run1-Frozen-Section-Ledger.xlsx as the authoritative frozen Section Eligibility Ledger and Evidence Cluster Ledger.
 
 Do not attach, inspect, read, parse, OCR, search or re-extract the original Doco.
 
@@ -133,19 +133,19 @@ Do not create, rename, replace or modify any SEL-* Ledger Row IDs.
 
 Do not create, rename, replace or modify any EC-* Evidence Cluster IDs.
 
-Copy the Section Eligibility Ledger and Evidence Cluster Ledger worksheets from Run1_Frozen_Section_Ledger.xlsx into the output workbook unchanged, except for workbook styling or formatting.
+Copy the Section Eligibility Ledger and Evidence Cluster Ledger worksheets from Run1-Frozen-Section-Ledger.xlsx into the output workbook unchanged, except for workbook styling or formatting.
 
 Perform the mapping pass only from the supplied frozen ledger and selected catalog.
 
 Create the Excel workbook output and save it as:
 
-Run2_Mapping_Output.xlsx
+Run2-ISM-Mapping-Output.xlsx
 ```
 
 Download the ISM mapping output and save it as:
 
 ```text
-Run2_Mapping_Output.xlsx
+Run2-ISM-Mapping-Output.xlsx
 ```
 
 ---
@@ -154,8 +154,8 @@ Run2_Mapping_Output.xlsx
 Run 3:
 1. The ISM-Control-Discovery-Prompt
 2. The same ASD OSCAL ISM catalog JSON/YAML used in Runs 1 and 2
-3. Run1_Frozen_Section_Ledger.xlsx
-4. Run2_Mapping_Output.xlsx
+3. Run1-Frozen-Section-Ledger.xlsx
+4. Run2-ISM-Mapping-Output.xlsx
 
 ```
 Run `ISM-Control-Discovery-Prompt` as a prompt.
@@ -166,9 +166,9 @@ Operating mode = `Mapping from supplied frozen ledger`
 
 Use the attached `ISM_catalog.json` as the authoritative ASD OSCAL ISM catalog.
 
-Use `Run1_Frozen_Section_Ledger.xlsx` as the authoritative frozen `Section Eligibility Ledger` and `Evidence Cluster Ledger`.
+Use `Run1-Frozen-Section-Ledger.xlsx` as the authoritative frozen `Section Eligibility Ledger` and `Evidence Cluster Ledger`.
 
-Use `Run2_Mapping_Output.xlsx` as the cross-run repeatability baseline workbook.
+Use `Run2-ISM-Mapping-Output.xlsx` as the cross-run repeatability baseline workbook.
 
 Do not attach, inspect, read, parse, OCR, search or re-extract the original Doco.
 
@@ -182,15 +182,15 @@ Do not create, rename, replace or modify any `SEL-*` Ledger Row IDs.
 
 Do not create, rename, replace or modify any `EC-*` Evidence Cluster IDs.
 
-Copy the `Section Eligibility Ledger` and `Evidence Cluster Ledger` worksheets from `Run1_Frozen_Section_Ledger.xlsx` into the output workbook unchanged, except for workbook styling or formatting.
+Copy the `Section Eligibility Ledger` and `Evidence Cluster Ledger` worksheets from `Run1-Frozen-Section-Ledger.xlsx` into the output workbook unchanged, except for workbook styling or formatting.
 
 Perform the mapping pass only from the supplied frozen ledger and selected catalog.
 
-Compare stable mapping artefacts against `Run2_Mapping_Baseline.xlsx`.
+Compare stable mapping artefacts against `Run2-Mapping-Baseline.xlsx`.
 
 Create the Excel workbook output and save it as:
 
-`Run3_ISM_Mapping_Repeated-Test.xlsx`
+`Run3-ISM-Mapping-Repeat-Test.xlsx`
 ```
 
 
