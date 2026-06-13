@@ -3009,18 +3009,19 @@ For every worksheet:
 1. Write all header cells and data rows first.
 2. Do not create formatting ranges until all worksheet rows have been written.
 3. Determine the final populated used range from `A1` to the last populated row and last populated column.
-4. Apply header styling to row 1 only.
-5. Apply borders, fills, alignment, wrapping and column widths directly to cells in the final populated used range.
-6. Freeze the header row using worksheet freeze panes only.
-7. Do not merge cells inside any tabular worksheet range.
-8. Ensure there are no blank column headers.
-9. Ensure there are no duplicate column headers within the same worksheet.
-10. If a listed worksheet has no substantive data rows, keep the worksheet, include the locked header row, and include one placeholder data row with `None found` in the first data cell where appropriate.
-11. If filter dropdowns are required, apply only worksheet-level AutoFilter to the final populated used range after all rows have been written.
-12. If worksheet-level AutoFilter cannot be applied safely to the exact final populated used range, omit filters rather than creating an invalid workbook.
-13. Never create an AutoFilter range that is smaller than the populated worksheet range.
-14. Never create an AutoFilter range before all worksheet rows have been written.
-15. Never create an AutoFilter range on a partially populated table, placeholder-only header range, or stale range.
+4. Set or verify the worksheet used-range dimension metadata to the final populated range, for example `A1:<last-column><last-row>`. Do not emit worksheets with missing, stale, empty, header-only or incorrect dimension refs.
+5. Apply header styling to row 1 only.
+6. Apply borders, fills, alignment, wrapping and column widths directly to cells in the final populated used range.
+7. Freeze the header row using worksheet freeze panes only.
+8. Do not merge cells inside any tabular worksheet range.
+9. Ensure there are no blank column headers.
+10. Ensure there are no duplicate column headers within the same worksheet.
+11. If a listed worksheet has no substantive data rows, keep the worksheet, include the locked header row, and include one placeholder data row with `None found` in the first data cell where appropriate.
+12. If filter dropdowns are required, apply only worksheet-level AutoFilter to the final populated used range after all rows have been written.
+13. If worksheet-level AutoFilter cannot be applied safely to the exact final populated used range, omit filters rather than creating an invalid workbook.
+14. Never create an AutoFilter range that is smaller than the populated worksheet range.
+15. Never create an AutoFilter range before all worksheet rows have been written.
+16. Never create an AutoFilter range on a partially populated table, placeholder-only header range, or stale range.
 
 Use this formatting approach instead of structured Excel tables:
 
@@ -3045,6 +3046,7 @@ Before finalising the workbook, perform an Excel OpenXML safety validation:
 * worksheet order matches the locked schema exactly;
 * worksheet column headers match the locked schema exactly;
 * every worksheet has a final used range from `A1` to its last populated row and last populated column;
+* every worksheet has worksheet dimension metadata that exactly matches the final populated used range;
 * no populated rows exist outside the final used range;
 * no structured Excel table objects exist;
 * no `/xl/tables/table*.xml` parts exist;
