@@ -26,15 +26,7 @@ Download the required files:
 
 This step reads the source document once and creates a fixed evidence base for later control mapping.
 
-### 1. Set the operating mode
-
-Edit `ISM-Mapper-Prompt.txt` and set:
-
-```text
-Operating mode = `Section ledger only`
-```
-
-### 2. Start a new chat
+### 1. Start a new chat
 
 Attach only:
 
@@ -44,7 +36,7 @@ Attach only:
 3. The ASD OSCAL ISM catalog JSON or YAML
 ```
 
-### 3. Paste this message
+### 2. Paste this message
 
 ```text
 Run ISM-Mapper-Prompt.txt as a prompt.
@@ -90,15 +82,7 @@ This step maps ISM controls using only the frozen ledger created in Step 1.
 
 The original document must not be re-attached or re-read.
 
-### 1. Set the operating mode
-
-Edit `ISM-Mapper-Prompt.txt` and set:
-
-```text
-Operating mode = `Mapping from supplied frozen ledger`
-```
-
-### 2. Start a new chat
+### 1. Start a new chat
 
 Attach only:
 
@@ -110,7 +94,7 @@ Attach only:
 
 > ⚠️ Do not attach the original source document in Step 2.
 
-### 3. Paste this message
+### 2. Paste this message
 
 ```text
 Run ISM-Mapper-Prompt.txt as a prompt.
