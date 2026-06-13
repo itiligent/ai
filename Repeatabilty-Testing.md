@@ -30,15 +30,7 @@ Run 3 repeats the mapping pass using the same frozen evidence base used in Run 2
 
 The original source document must **not** be supplied or re-read.
 
-### 1. Set the operating mode
-
-Edit `ISM-Mapper-Prompt.txt` and set:
-
-```text
-Operating mode = `Mapping from supplied frozen ledger`
-```
-
-### 2. Start a new chat
+### 1. Start a new chat
 
 Attach only:
 
@@ -49,7 +41,7 @@ Attach only:
 4. Run2-ISM-Mapping-Output.xlsx
 ```
 
-### 3. Paste this message
+### 2. Paste this message
 
 ```text
 Run ISM-Mapper-Prompt.txt as a prompt.
@@ -93,13 +85,7 @@ Run 4 compares the baseline mapping workbook against the repeat mapping workbook
 
 This run does **not** perform ISM mapping. It only checks whether Run 2 reproduced Run 3 without meaningful drift.
 
-### 1. Keep the operating mode setting:
-
-```text
-Operating mode = `Mapping from supplied frozen ledger`
-```
-
-### 2. Start a new chat
+### 1. Start a new chat
 
 Attach only:
 
@@ -109,9 +95,9 @@ Attach only:
 3. Run3-ISM-Mapping-Test.xlsx
 ```
 
-### Paste the below message 
+### 2. Paste the below message 
 
-Then run the below message with:
+### 3. Run the below message with:
 ```text
 run ISM Mapping Repeatability and Drift Validation as a prompt
 ```
