@@ -52,7 +52,7 @@ Attach only:
 ### 3. Paste this message
 
 ```text
-Run Promptname.txt as a prompt.
+Run ISM-Mapper-Prompt.txt as a prompt.
 
 Set:
 
@@ -104,7 +104,7 @@ Operating mode = `Mapping from supplied frozen ledger`
 Attach only:
 
 ```text
-1. Promptname.txt
+1. ISM-Mapper-Prompt.txt
 2. Run2-ISM-Mapping-Output.xlsx
 3. Run3-ISM-Mapping-Test.xlsx
 ```
