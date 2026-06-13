@@ -118,6 +118,9 @@ Inputs supplied in this run:
 2. Repeat mapping workbook:
    `Run3-ISM-Mapping-Test.xlsx`
 
+3. The ISMMapper Prompt:
+   `ISM-Mapper-Prompt.txt`
+
 ## Task
 
 Compare the two supplied workbooks to determine whether Run 3 repeated Run 2 without mapping drift.
