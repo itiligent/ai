@@ -10,6 +10,9 @@
 
 ## 📘 Before You Start
 
+> ⚠️ **Do not run this workflow in a ChatGPT Project or other shared persistent context.**
+> Each task must be run in a clean chat with only the required inputs attached, so evidence, mapping, and validation stages remain isolated and repeatable.
+
 Read the [README first](https://github.com/itiligent/ISM-Mapper/blob/main/Readme.md).
 
 Download the required files:
@@ -19,9 +22,6 @@ Download the required files:
 | `ISM-Mapper-Prompt.txt`                  | <a href="./ISM-Mapper-Prompt.txt" download="ISM-Mapper-Prompt.txt">Download prompt</a>                            |
 | `ISM_catalog.json` or `ISM_catalog.yaml` | [ASD OSCAL ISM releases](https://github.com/AustralianCyberSecurityCentre/ism-oscal/releases)                      |
 | Source document                          | The DOCX or PDF you want to assess                                                                                 |
-
-> ⚠️ ##**Do not run this workflow in a ChatGPT Project or other shared persistent context.**
-> Each task must be run in a clean chat with only the required inputs attached, so evidence, mapping, and validation stages remain isolated and repeatable.
 
 ---
 
