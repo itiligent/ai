@@ -92,7 +92,7 @@ Attach only:
 3. Run1-Frozen-Section-Ledger.xlsx
 ```
 
-> ⚠️ Do not attach the original source document in Step 2.
+> ⚠️ Do not attach the original source document used in Step 1.
 
 ### 2. Paste this message
 
