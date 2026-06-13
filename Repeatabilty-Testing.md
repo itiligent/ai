@@ -91,7 +91,7 @@ Create the Excel workbook output and save it as:
 
 Run 4 compares the baseline mapping workbook against the repeat mapping workbook.
 
-This run does **not** perform ISM mapping. It only checks whether Run 3 reproduced Run 2 without meaningful drift.
+This run does **not** perform ISM mapping. It only checks whether Run 2 reproduced Run 3 without meaningful drift.
 
 ### 1. Keep the operating mode setting:
 
@@ -113,7 +113,7 @@ Attach only:
 
 Then run the below message with:
 ```text
-run ISM Mapping Repeatability and Drift Validation Prompt as a prompt
+run ISM Mapping Repeatability and Drift Validation as a prompt
 ```
 
 ```text
