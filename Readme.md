@@ -195,20 +195,149 @@ Controls the source of truth for ISM controls.
 * Uploaded `ISM_catalog.json` improves repeatability.
 * Online ASD OSCAL catalog (YAML) sources.
 
+### 🎚️ Control Output Limits and Output Modes
+
+ISM Mapper applies control output limits after candidate controls have been scored and ranked.
+
+These limits help keep the output focused, reviewable, and repeatable. They do **not** change the evidence score of a candidate control. Instead, they control how many scored candidates are allowed into the final workbook.
+
 ---
 
-### 🎚️ Control Output Limits
+### 📌 Default Settings
 
-Caps can be applied per section or evidence cluster.
+| Setting                              |         Default |
+| ------------------------------------ | --------------: |
+| Output mode                          | `Full coverage` |
+| Optional Review Candidates           |            `On` |
+| Optional Review Candidate global cap |            `100` |
 
-* Lower volume settings apply stricter selection pressure for fewer, stronger matches.
-* Higher volume produces broader coverage, but increases review effort.
-* Enable/Disable Optional Control Candidates  
+---
+
+### 🧭 Output Modes
+
+ISM Mapper supports three output modes.
+
+| Mode                   | Behaviour                                                                                                                                                                                                 | Use case                      |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| `Full coverage strict` | Every eligible section is represented in the ISM Action Register. Suggested controls and alternates are included only where they pass high-confidence gates. Optional Review Candidates are not produced. | Assurance-focused review      |
+| `Full coverage`        | Every eligible section is represented. Suggested controls, suggested alternates, and optional review candidates may be produced where supported by evidence.                                              | Default balanced review       |
+| `Mapped controls only` | Only rows with existing controls, suggested controls, or suggested alternates are included. Sections with no clear mapping are omitted from the action register but still counted in validation.          | Concise mapped-control output |
+
+`Full coverage` and `Full coverage strict` prevent eligible sections from silently disappearing by requiring every eligible section to have an explicit action-register outcome.
+
+`Mapped controls only` produces a shorter workbook, but it is less useful for checking which eligible sections had no clear ISM mapping.
+
+---
+
+### 🧭 Full Coverage Mode
+
+`Full coverage` is the default balanced output mode.
+
+It requires every eligible solution section to be represented in the ISM Action Register, even where no clear ISM control can be mapped.
+
+This prevents eligible sections from silently disappearing from the output and improves auditability because every eligible section has an explicit outcome.
+
+In this mode:
+
+* existing ISM references are preserved and reviewed;
+* suggested controls are included where the evidence passes the required precision gates;
+* suggested alternate controls are included where the evidence supports a better-fitting or additional control;
+* optional review candidates may be produced outside the ISM Action Register;
+* eligible sections with no clear mapping receive a `No ISM control identified` row.
+
+> `Full coverage` does not mean “suggest as many controls as possible”.
+> It means every eligible section must be accounted for.
+
+---
+
+### ✅ Suggested Control Limits
+
+Suggested controls are used where the frozen evidence strongly supports a specific ISM control.
+
+| Limit                                           | Default |
+| ----------------------------------------------- | ------: |
+| Maximum Suggested Controls per section          |     `2` |
+| Maximum Suggested Controls per evidence cluster |     `1` |
+
+A second suggested control may only be included where it is supported by a separate evidence cluster with a separate obligation, security activity, or control outcome.
+
+This prevents multiple controls from being mapped to the same evidence unless there is a clear evidence basis.
+
+---
+
+### 🔁 Suggested Alternate Control Limits
+
+Suggested alternate controls are used where the document references or appears to contain one control, but the evidence better supports another control or an additional control.
+
+| Limit                                                       | Default |
+| ----------------------------------------------------------- | ------: |
+| Maximum Suggested Alternates per existing control reference |     `1` |
+| Maximum Suggested Alternates per section                    |     `2` |
+| Maximum Suggested Alternates per evidence cluster           |     `1` |
+
+Alternates are capped so they remain targeted and defensible rather than becoming broad speculative mappings.
+
+---
+
+### 🟡 Optional Review Candidate Limits
+
+Optional Review Candidates are used where there is plausible evidence, but not enough confidence for a firm recommendation.
+
+| Limit                                                                 |        Default |
+| --------------------------------------------------------------------- | -------------: |
+| Optional Review Candidates per section                                | `1` by default |
+| Optional Review Candidates per section where separate evidence exists |      Up to `2` |
+| Global Optional Review Candidate cap                                  |           `20` |
+
+A second Optional Review Candidate may only be included where it is supported by a clearly separate Evidence Cluster ID and a different implementation obligation or control outcome.
+
+This allows useful discovery items to be surfaced without overstating uncertain matches as firm recommendations.
+
+---
+
+### 🧮 How Limits Are Applied
+
+Control limits are applied **after scoring**, not during scoring.
+
+```text
+Frozen evidence
+   ↓
+Candidate controls identified
+   ↓
+Candidate controls scored
+   ↓
+Candidates ranked by evidence strength and fit
+   ↓
+Output limits applied
+   ↓
+Final workbook rows created
+```
+
+The mapper should not increase or reduce a candidate score to satisfy a limit.
+
+If a section or evidence cluster reaches its configured limit, lower-ranked candidates are excluded from the output.
+
+---
+
+### 🏆 Default Priority Order
+
+When output limits are reached, candidates are prioritised in this order:
+
+1. **Suggested Controls** with strong evidence fit;
+2. **Suggested Alternate Controls** where the alternate is a better or additional fit;
+3. **Optional Review Candidates** with plausible but uncertain evidence;
+4. weak, repetitive, or low-confidence candidates are excluded.
+
+This keeps the output useful for assurance review while still allowing controlled discovery coverage.
+
+---
 
 ### ⚖️ Output Limit Trade-Off
 
 > **Stricter settings improve precision and repeatability.**
 > **Looser settings improve coverage, but create more optional review items.**
 
----
+For assurance-focused reviews, stricter settings are usually preferred.
+
+For discovery-focused reviews, looser settings may be useful, provided optional candidates remain clearly separated from firm recommendations.
 
