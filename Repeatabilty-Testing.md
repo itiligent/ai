@@ -109,7 +109,12 @@ Attach only:
 3. Run3-ISM-Mapping-Test.xlsx
 ```
 
-### Prompt message
+### Paste the below message 
+
+Then run the below message with:
+```text
+run ISM Mapping Repeatability and Drift Validation Prompt as a prompt
+```
 
 ```text
 You are reviewing repeatability and drift between two ISM mapping workbooks produced from the same frozen Section Eligibility Ledger using `ISM-Mapper-Prompt.txt`.
