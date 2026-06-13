@@ -114,6 +114,10 @@ Attach only:
 ```text
 You are reviewing repeatability and drift between two ISM mapping workbooks produced from the same frozen Section Eligibility Ledger using `ISM-Mapper-Prompt.txt`.
 
+Set:
+
+Operating mode = `Mapping from supplied frozen ledger`
+
 Inputs supplied in this run:
 
 1. Baseline mapping workbook:
