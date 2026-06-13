@@ -20,6 +20,9 @@ Download the required files:
 | `ISM_catalog.json` or `ISM_catalog.yaml` | [ASD OSCAL ISM releases](https://github.com/AustralianCyberSecurityCentre/ism-oscal/releases)                      |
 | Source document                          | The DOCX or PDF you want to assess                                                                                 |
 
+> ⚠️ **Do not run this workflow in a ChatGPT Project or other shared persistent context.**
+> Each task must be run in a clean chat with only the required inputs attached, so evidence, mapping, and validation stages remain isolated and repeatable.
+
 ---
 
 ## 🧊 Step 1: Create a Frozen Document Ledger
